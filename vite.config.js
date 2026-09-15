@@ -1,5 +1,7 @@
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import vue from '@vitejs/plugin-vue';
+import { createApi } from './server/api.js';
+import { openDb } from './server/db.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -47,8 +49,37 @@ function noticePdfs() {
   };
 }
 
+/**
+ * 개발 서버에도 배포와 똑같은 API 를 물린다. `npm run dev` 만으로 커뮤니티·방문수가
+ * 동작하게 하려는 것. DB 는 개발용으로 data/dev.db 를 따로 쓴다.
+ */
+function devApi() {
+  // vite 의 html 폴백보다 먼저 잡아야 해서 훅 본문에서 바로 등록한다(post 훅 X).
+  const mount = (server) => {
+    const db = openDb(process.env.DB_PATH || path.join(ROOT, 'data', 'dev.db'));
+    server.middlewares.use(createApi(db));
+    server.httpServer?.on('close', () => {
+      try {
+        db.close();
+      } catch {
+        /* 이미 닫혔으면 무시 */
+      }
+    });
+  };
+
+  return {
+    name: 'dev-api',
+    configureServer(server) {
+      mount(server);
+    },
+    configurePreviewServer(server) {
+      mount(server);
+    },
+  };
+}
+
 export default defineConfig({
-  plugins: [react(), noticePdfs()],
+  plugins: [vue(), noticePdfs(), devApi()],
   server: { port: 5173, host: true },
-  preview: { port: 5173 },
+  preview: { port: 5173, host: true },
 });

@@ -1,0 +1,17 @@
+# 배포 이미지를 로컬에서 그대로 확인할 때 쓴다.
+#   NAVER_MAP_CLIENT_ID=xxxx docker compose up --build  ->  http://localhost:8080
+# 볼륨(app-data)이 Railway 의 /data 볼륨 역할을 한다.
+services:
+  web:
+    build: .
+    ports:
+      - '8080:8080'
+    environment:
+      PORT: 8080
+      DB_PATH: /data/app.db
+      NAVER_MAP_CLIENT_ID: ${NAVER_MAP_CLIENT_ID:-}
+    volumes:
+      - app-data:/data
+
+volumes:
+  app-data:
