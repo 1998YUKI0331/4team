@@ -6,20 +6,27 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "start": "node server/index.js",
+    "serve": "npm run build && node server/index.js",
     "preview": "vite preview",
     "data:addresses": "node scripts/extract-addresses.mjs",
     "data:geocode": "node scripts/geocode.mjs",
     "data:build": "node scripts/extract-addresses.mjs && node scripts/geocode.mjs"
   },
   "dependencies": {
-    "vue": "^3.5.13"
+    "compression": "^1.8.2",
+    "express": "^5.2.1"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.0",
     "pdfjs-dist": "^4.10.38",
-    "vite": "^7.0.0"
+    "vite": "^7.0.0",
+    "vue": "^3.5.13"
   },
   "allowScripts": {
     "esbuild@0.28.2": true
+  },
+  "engines": {
+    "node": ">=22.22"
   }
 }

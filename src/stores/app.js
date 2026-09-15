@@ -8,6 +8,9 @@ import {
   DEFAULT_FILTERS,
 } from '../lib/notices';
 import { createProfile, evaluateAll } from '../lib/matching';
+import { api } from '../lib/api';
+import { communityStore } from './community';
+import { markOffline, markOnline, serverState } from './server';
 import { visitStore } from './visits';
 
 /**
@@ -92,7 +95,7 @@ export function matchOf(id) {
   return matches.value?.get(id) ?? null;
 }
 
-/** 상세를 여는 모든 경로가 거쳐 가는 자리. 여기서만 방문수를 센다. */
+/** 상세를 여는 모든 경로가 거쳐 가는 자리. 여기서만 방문수를 센다(서버 기록). */
 function markVisit(id) {
   if (id && id !== ui.selectedId) visitStore.visit(id);
 }
@@ -133,3 +136,43 @@ export function resetFilters() {
 }
 
 export { NOTICES };
+
+/* ------------------------------------------------------------ 서버 동기화 */
+
+/**
+ * 앱이 뜰 때 한 번: 방문수·글 수·저장해 둔 내 조건을 받아 온다.
+ * 서버가 죽어 있어도 지도/목록/상세는 그대로 보이게 실패를 삼킨다(배너만 뜬다).
+ */
+export async function initApp() {
+  try {
+    const data = await api.bootstrap();
+    visitStore.hydrate(data.visits);
+    communityStore.hydrateCounts(data.postCounts);
+    if (data.profile && Object.keys(data.profile).length) Object.assign(profile, data.profile);
+    markOnline();
+  } catch (e) {
+    markOffline(e);
+  } finally {
+    serverState.ready = true;
+  }
+}
+
+/** 내 조건은 입력할 때마다가 아니라, 손을 멈추면 한 번 저장한다. */
+let saveTimer = null;
+
+watch(
+  () => ({ ...profile }),
+  () => {
+    if (!serverState.ready) return; // 부트스트랩이 덮어쓰는 값은 저장하지 않는다
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(async () => {
+      try {
+        await api.saveProfile({ ...profile });
+        markOnline();
+      } catch (e) {
+        if (e.offline) markOffline(e);
+      }
+    }, 700);
+  },
+  { deep: true }
+);

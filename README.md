@@ -1,13 +1,17 @@
 # 청약지도 (fourteam)
 
 네이버 지도 위에 수도권 아파트 분양·임대 공고를 호갱노노/네이버부동산처럼 보여 주는 웹앱.
-**Vue 3 + Vite** 로 만들고 **Docker 이미지 한 장**으로 배포한다(Railway GitHub 연동 기준).
+**Vue 3 + Vite** 프런트와 **Node + SQLite** API 를 **Docker 이미지 한 장**으로 배포한다(Railway GitHub 연동 기준).
 
 ```bash
 npm install
-npm run dev      # http://localhost:5173
+npm run dev      # http://localhost:5173 (개발 서버에 API 도 같이 붙는다, DB: data/dev.db)
 npm run build    # dist/ 생성
+npm run serve    # 빌드 + 배포와 동일한 서버 실행 (http://localhost:8080)
 ```
+
+커뮤니티 글·방문수·내 조건은 브라우저가 아니라 **서버 SQLite** 에 저장된다. 그래서 다른 사람이 쓴 글이
+그대로 보이고, 방문 순위도 전체 방문자 합계다. 자세한 건 [저장소와 API](#저장소와-api) 참고.
 
 ## 화면 구성
 
@@ -51,8 +55,7 @@ npm run build    # dist/ 생성
   창 크기를 바꾸면 열려 있던 커뮤니티가 탭 ↔ 팝업으로 자동으로 옮겨 간다.
 
 글에는 주제·닉네임·공감·댓글이 붙고, 같은 시·도의 다른 단지 글은 *인근 단지 이야기* 로 따로 묶어
-바로 건너뛸 수 있다. 저장소는 브라우저 `localStorage` 하나뿐인 데모라 기기 간 공유는 되지 않는다.
-서버를 붙일 때는 `src/stores/community.js` 의 `load()/persist()` 만 API 호출로 바꾸면 된다.
+바로 건너뛸 수 있다. 글·댓글·공감은 서버에 저장되어 **모든 방문자가 같은 내용을 본다.**
 
 ## 방문 순위와 왕관
 
@@ -60,41 +63,71 @@ npm run build    # dist/ 생성
 
 - 카드·상세·지도 마커의 단지 이름 앞에 1·2·3위 **금/은/동 왕관**이 붙고, 카드에는
   `방문 N · 3위`(10위까지 숫자 표기)가 함께 나온다.
-- 같은 단지를 연속으로 눌러도 한 번만 센다(선택이 바뀔 때만 기록). 동점이면 최근에 본 쪽이 앞선다.
+- 서버가 전체 방문자의 합계를 센다. 같은 사람이 같은 단지를 다시 열어도 **쿨다운 30분**
+  (`VISIT_COOLDOWN_MS`) 안에서는 올라가지 않아 새로고침으로 순위를 올릴 수 없다.
+- 동점이면 최근에 본 쪽이 앞선다.
 - 순위가 바뀌면 지도 마커는 왕관이 붙거나 떨어진 것만 다시 그린다(전체 재생성 없음).
-- 방문수도 `localStorage` 에만 쌓이는 로컬 값이다.
+
+## 저장소와 API
+
+서버는 `server/` 에 있는 Express 앱 하나뿐이고, 정적 파일(`dist/`)과 API 를 같이 서빙한다.
+DB 는 **SQLite 파일 하나**(`DB_PATH`, 기본 `/data/app.db`)이며 Node 내장 `node:sqlite` 를 쓴다.
+네이티브 빌드도, 추가 DB 서버도 없다. (Node 22.22+ 필요)
+
+로그인은 없다. 서버가 첫 요청에 익명 식별자 쿠키(`cy_uid`, HttpOnly·1년)를 심고, 그걸로
+"내가 공감했는지", 방문 쿨다운, 내 조건 프로필을 구분한다. 나중에 로그인을 붙이면 이 자리에
+계정 id 를 넣으면 된다.
+
+| 메서드 | 경로 | 하는 일 |
+| --- | --- | --- |
+| GET | `/api/bootstrap` | 첫 로딩 한 번 — 방문수·단지별 글 수·저장된 내 조건 |
+| GET | `/api/notices/:id/community` | 그 단지 글 + 인근 단지 글 |
+| POST | `/api/notices/:id/posts` | 글 작성 (시간당 12개) |
+| POST | `/api/posts/:id/like` | 공감 토글 |
+| POST | `/api/posts/:id/comments` | 댓글 (시간당 40개) |
+| POST | `/api/notices/:id/visit` | 방문 기록 (쿨다운 30분) |
+| GET·PUT | `/api/profile` | 내 조건 불러오기·저장 |
+
+- 테이블: `posts` / `comments` / `post_likes` / `visits` / `visit_log` / `profiles` / `meta`.
+  스키마·쿼리는 `server/db.js` 한 파일에 모여 있다.
+- 글 수 0건인 첫 부팅에서만 예시 글 6건을 넣는다(`server/seed.js`).
+- 쓰기에는 uid 기준의 간단한 시간당 제한이 걸려 있고, 길이·주제·공고 id 를 서버에서 다시 검증한다.
+- 서버에 연결하지 못하면 화면 위에 안내 한 줄이 뜨고 **지도·목록·상세는 그대로 동작한다.**
 
 ## 배포 (Docker / Railway)
 
 ```bash
 docker build -t cheongyak-map .
-docker run --rm -p 8080:8080 -e NAVER_MAP_CLIENT_ID=발급받은키 cheongyak-map
+docker run --rm -p 8080:8080 -v cy-data:/data -e NAVER_MAP_CLIENT_ID=발급받은키 cheongyak-map
 # 또는
 NAVER_MAP_CLIENT_ID=발급받은키 docker compose up --build
 ```
 
-- 멀티스테이지: `node:22-alpine` 에서 빌드 → `nginx:1.29-alpine` 이 `dist/` 를 서빙.
-- **지도 키는 이미지에 굽지 않는다.** 컨테이너가 뜰 때 `docker/10-app-config.sh` 가
-  `NAVER_MAP_CLIENT_ID` 로 `/runtime-config.js` 를 새로 쓰고, 앱은 `window.__APP_CONFIG__` 를
-  먼저 본 뒤 없으면 빌드 타임 `VITE_NAVER_MAP_CLIENT_ID` 로 물러선다(`src/lib/config.js`).
+- 멀티스테이지: `node:22-alpine` 에서 빌드 → 같은 알파인 이미지에서 `node server/index.js` 만 띄운다.
+  런타임 의존성은 `express` + `compression` 둘뿐이고 `vue`·`vite` 는 들어가지 않는다.
+- **지도 키는 이미지에 굽지 않는다.** `/runtime-config.js` 를 서버가 매 요청 환경변수로 만들어 내려 주고,
+  앱은 `window.__APP_CONFIG__` 를 먼저 본 뒤 없으면 빌드 타임 `VITE_NAVER_MAP_CLIENT_ID` 로 물러선다.
   → 키를 바꿔도 **재배포만** 하면 되고 재빌드가 필요 없다.
-- 같은 스크립트가 플랫폼이 주는 `PORT` 를 nginx 에 꽂는다(기본 8080). IPv6 스택이 있을 때만
-  `listen [::]` 를 추가하므로 IPv4 전용 환경에서도 뜬다.
-- `/healthz` 는 200 을 돌려주는 헬스체크 경로다(`railway.toml` 의 `healthcheckPath`).
+- `PORT` 는 플랫폼이 주는 값을 그대로 쓴다(기본 8080). `/healthz` 가 헬스체크 경로다.
 - 캐시: `/assets/*` 는 1년 immutable, `index.html` 과 `runtime-config.js` 는 `no-store`.
 - 원문 PDF(`공고문/`, 45MB)는 빌드 시 `dist/공고문/` 으로 복사돼 같이 서빙된다.
 
 ### Railway 에서
 
 1. New Project → **Deploy from GitHub repo** 로 이 레포를 연결한다.
-   루트의 `railway.toml` 이 Dockerfile 빌더와 헬스체크를 지정하므로 별도 설정이 필요 없다.
+   루트의 `railway.toml` 이 Dockerfile 빌더와 헬스체크를 지정하므로 별도 빌드 설정이 필요 없다.
 2. 서비스 **Variables** 에 `NAVER_MAP_CLIENT_ID` 를 추가한다. (`PORT` 는 Railway 가 자동 주입)
-3. Settings → Networking 에서 도메인을 만들고, **그 도메인을**
+3. ⚠️ 서비스 **Data(Volumes) → Add Volume** 에서 마운트 경로를 **`/data`** 로 볼륨을 붙인다.
+   붙이지 않으면 컨테이너 파일시스템에 DB 가 생겨 **재배포·재시작마다 글과 방문수가 사라진다.**
+   (볼륨을 쓰는 서비스는 복제본을 늘릴 수 없다. `numReplicas = 1` 로 둔 이유.)
+4. Settings → Networking 에서 도메인을 만들고, **그 도메인을**
    NCP 콘솔 > Maps > 애플리케이션의 **웹 서비스 URL** 에 등록한다.
    등록하지 않으면 인증 실패로 지도 자리에 안내 화면이 뜬다.
 
 키가 없거나 인증에 실패해도 앱은 죽지 않는다. 지도 자리에 원인과 해결 순서가 표시되고
 목록·상세·커뮤니티는 그대로 동작한다.
+
+백업은 볼륨의 `app.db` 한 파일만 받으면 된다(`railway ssh` 후 복사 또는 볼륨 스냅샷).
 
 ## 데이터 파이프라인
 
@@ -135,10 +168,12 @@ src/
     notices.js           데이터 가공 - D-day·금액 포맷·필터
     matching.js          내 조건 → 특별공급 자격 판정 (asis 로직 이식)
     crown.js             1·2·3위 왕관 마크업 (컴포넌트·마커 공용)
+    api.js               서버 API 호출 래퍼
   stores/
-    app.js               필터·선택·매칭 등 화면 공통 상태
-    community.js         단지별 커뮤니티 (localStorage)
-    visits.js            단지 방문 카운트·순위 (localStorage)
+    app.js               필터·선택·매칭 + 부트스트랩/프로필 동기화
+    community.js         단지별 커뮤니티 (서버 API + 캐시)
+    visits.js            단지 방문 카운트·순위 (서버 API)
+    server.js            서버 연결 상태(끊기면 안내 배너)
   components/
     TopBar / FilterBar / NoticeCard
     MatchPanel           접이식 "내 조건 필터"
@@ -148,10 +183,12 @@ src/
     CommunityModal       좁은 화면용 레이어 팝업
     RankCrown            방문 순위 왕관
     MapNotice            지도 키 없음/로드 실패 안내
-docker/
-  nginx.conf.template    PORT·IPv6 자리를 치환해 쓰는 서버 설정
-  10-app-config.sh       시작 시 설정 치환 + runtime-config.js 생성
-Dockerfile               node 빌드 → nginx 서빙
+server/
+  index.js               정적 서빙 + API + /runtime-config.js + /healthz
+  api.js                 커뮤니티·방문·프로필 라우트, 익명 쿠키, 쓰기 제한
+  db.js                  SQLite 스키마와 쿼리 (node:sqlite)
+  seed.js / notices.js   첫 부팅 예시 글 / 공고 id·지역 검증
+Dockerfile               node 빌드 → node 단일 프로세스 서빙
 railway.toml             Railway 빌더·헬스체크
 vite.config.js           `공고문/` PDF 를 복사 없이 서빙하는 플러그인
 asis/                    기존 단일 HTML 앱 (참고용, 배포 이미지에서는 제외)
@@ -167,3 +204,7 @@ asis/                    기존 단일 HTML 앱 (참고용, 배포 이미지에�
   관할 시·군 중심에 찍힌다.
 - `asis/` 는 배포 대상이 아니다(`.dockerignore`). 기존 `내집매칭 실행.bat` + `serve.ps1`
   경로는 그대로 두어 비교·참고용으로만 남겼다.
+- 커뮤니티는 **공개 게시판**이다. 로그인·신고·삭제 UI가 아직 없으므로, 외부에 열어 둘 생각이라면
+  최소한 신고/숨김 기능과 운영자 삭제 경로를 먼저 붙이는 편이 좋다. 지금은 서버에서 길이·빈도만 막는다.
+- 내 조건(나이·소득 등)은 익명 쿠키에 묶여 서버에 저장된다. 민감한 값이라면 저장 대신 화면에서만
+  쓰도록 `PUT /api/profile` 호출을 빼면 된다(`src/stores/app.js`).

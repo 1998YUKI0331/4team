@@ -10,3 +10,4 @@ asis
 npm-debug.log*
 .DS_Store
 scripts/.geocode-cache.json
+data

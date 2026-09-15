@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { CATEGORIES, CATEGORY_LABEL, communityStore, formatPostDate } from '../stores/community';
 import { NOTICE_BY_ID } from '../lib/notices';
 
@@ -15,9 +15,15 @@ const draft = ref({ category: '분위기', title: '', content: '', author: '' })
 const commentDraft = ref({});
 const writing = ref(false);
 const error = ref('');
+const pending = ref(false);
 
 const posts = computed(() => communityStore.postsFor(props.notice.id, sort.value));
-const nearby = computed(() => communityStore.nearbyPostsFor(props.notice));
+const nearby = computed(() => communityStore.nearbyFor(props.notice.id));
+const loading = computed(() => communityStore.isLoading(props.notice.id));
+
+/** 탭/팝업을 열 때, 그리고 다른 단지로 옮겨 갈 때 서버에서 받아 온다. */
+watch(() => props.notice.id, (id) => communityStore.load(id), { immediate: true });
+onMounted(() => communityStore.load(props.notice.id, { force: true }));
 
 function noticeTitle(id) {
   return NOTICE_BY_ID.get(id)?.title ?? '다른 단지';
@@ -30,33 +36,53 @@ function toggleComments(id) {
   openComments.value = next;
 }
 
-function submitPost() {
+async function submitPost() {
   const title = draft.value.title.trim();
   const content = draft.value.content.trim();
   if (!title) return (error.value = '제목을 입력해 주세요.');
   if (!content) return (error.value = '내용을 입력해 주세요.');
 
-  communityStore.addPost({
-    noticeId: props.notice.id,
-    category: draft.value.category,
-    title,
-    content,
-    author: draft.value.author.trim(),
-  });
-  draft.value = { category: draft.value.category, title: '', content: '', author: draft.value.author };
-  error.value = '';
-  writing.value = false;
-  sort.value = 'latest';
+  pending.value = true;
+  try {
+    await communityStore.addPost(props.notice.id, {
+      category: draft.value.category,
+      title,
+      content,
+      author: draft.value.author.trim(),
+    });
+    draft.value = { category: draft.value.category, title: '', content: '', author: draft.value.author };
+    error.value = '';
+    writing.value = false;
+    sort.value = 'latest';
+  } catch (e) {
+    error.value = e.message;
+  } finally {
+    pending.value = false;
+  }
 }
 
-function submitComment(postId) {
+async function like(postId) {
+  try {
+    await communityStore.toggleLike(postId);
+    error.value = '';
+  } catch (e) {
+    error.value = e.message;
+  }
+}
+
+async function submitComment(postId) {
   const text = (commentDraft.value[postId] ?? '').trim();
   if (!text) return;
-  communityStore.addComment(postId, text, '');
-  commentDraft.value = { ...commentDraft.value, [postId]: '' };
-  const next = new Set(openComments.value);
-  next.add(postId);
-  openComments.value = next;
+  try {
+    await communityStore.addComment(postId, text, '');
+    commentDraft.value = { ...commentDraft.value, [postId]: '' };
+    const next = new Set(openComments.value);
+    next.add(postId);
+    openComments.value = next;
+    error.value = '';
+  } catch (e) {
+    error.value = e.message;
+  }
 }
 </script>
 
@@ -74,8 +100,10 @@ function submitComment(postId) {
     </div>
 
     <p class="community__disclaimer">
-      이 게시판은 <b>브라우저에만 저장되는 데모</b>예요. 같은 기기에서만 보이며 다른 사람과 공유되지 않습니다.
+      이 게시판의 글·댓글·공감은 <b>서버에 저장되어 모든 방문자에게 보입니다.</b> 개인정보는 남기지 말아 주세요.
     </p>
+
+    <p v-if="error" class="community__error">{{ error }}</p>
 
     <button v-if="!writing" type="button" class="btn btn--primary community__write" @click="writing = true">
       이 단지에 글 남기기
@@ -90,14 +118,14 @@ function submitComment(postId) {
       </div>
       <input v-model="draft.title" maxlength="60" placeholder="제목" aria-label="제목" />
       <textarea v-model="draft.content" rows="4" maxlength="1000" placeholder="이 단지·동네 이야기를 남겨보세요" />
-      <p v-if="error" class="community__error">{{ error }}</p>
       <div class="community__formfoot">
         <button type="button" class="btn" @click="((writing = false), (error = ''))">취소</button>
-        <button type="submit" class="btn btn--primary">등록</button>
+        <button type="submit" class="btn btn--primary" :disabled="pending">{{ pending ? '등록 중…' : '등록' }}</button>
       </div>
     </form>
 
-    <p v-if="!posts.length" class="community__empty">
+    <p v-if="loading && !posts.length" class="community__empty">글을 불러오는 중…</p>
+    <p v-else-if="!posts.length" class="community__empty">
       아직 이 단지에 글이 없어요.<br />가장 먼저 분위기·호재·생활 정보를 남겨보세요.
     </p>
 
@@ -109,7 +137,7 @@ function submitComment(postId) {
       <h4 class="post__title">{{ p.title }}</h4>
       <p class="post__content">{{ p.content }}</p>
       <div class="post__foot">
-        <button type="button" :class="{ 'is-on': p.likedByMe }" @click="communityStore.toggleLike(p.id)">
+        <button type="button" :class="{ 'is-on': p.likedByMe }" @click="like(p.id)">
           {{ p.likedByMe ? '♥' : '♡' }} 공감 {{ p.likes }}
         </button>
         <button type="button" @click="toggleComments(p.id)">💬 댓글 {{ p.comments.length }}</button>

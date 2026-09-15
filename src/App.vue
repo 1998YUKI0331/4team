@@ -10,7 +10,18 @@ import MapNotice from './components/MapNotice.vue';
 import DetailPanel from './components/DetailPanel.vue';
 import { useMediaQuery } from './composables/useMediaQuery';
 import { NOTICE_BY_ID, NOTICES } from './lib/notices';
-import { closeDetail, focusOn, listed, matchOf, outOfViewCount, selected, selectedMatch, ui } from './stores/app';
+import {
+  closeDetail,
+  focusOn,
+  initApp,
+  listed,
+  matchOf,
+  outOfViewCount,
+  selected,
+  selectedMatch,
+  ui,
+} from './stores/app';
+import { serverState } from './stores/server';
 
 /**
  * 커뮤니티를 상세 패널 "탭" 으로 넣을지, 화면 위에 "레이어 팝업" 으로 띄울지의 기준.
@@ -59,13 +70,21 @@ function onKeydown(e) {
   if (selected.value) closeDetail();
 }
 
-onMounted(() => document.addEventListener('keydown', onKeydown));
+onMounted(() => {
+  document.addEventListener('keydown', onKeydown);
+  initApp(); // 방문수·글 수·저장된 내 조건 불러오기 (실패해도 화면은 그대로)
+});
 onUnmounted(() => document.removeEventListener('keydown', onKeydown));
 </script>
 
 <template>
   <div class="app">
     <TopBar />
+
+    <p v-if="serverState.ready && !serverState.online" class="offline">
+      서버에 연결하지 못했습니다. 커뮤니티와 방문 순위는 잠시 사용할 수 없어요.
+      <button type="button" @click="initApp">다시 시도</button>
+    </p>
 
     <div class="app__body">
       <section class="sidebar" :class="{ 'is-open': ui.sheetOpen }">
