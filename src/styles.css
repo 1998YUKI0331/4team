@@ -2094,3 +2094,174 @@ div:has(> .cluster-root) {
   color: #99500d;
   cursor: pointer;
 }
+
+/* ------------------------------------------------------------ 금갱이 마스코트 */
+
+/*
+ * 우측 하단 상주 캐릭터. 사용자가 뭔가 누르면 stores/buddy.js 가 0.5초를 벌어 주고
+ * 그동안 여기 스프라이트가 8프레임(208x260)을 돌며 버튼을 두드린다.
+ */
+.buddy {
+  position: fixed;
+  right: 18px;
+  bottom: 20px;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  pointer-events: none; /* 빈 영역은 지도 조작을 막지 않는다 */
+  transition:
+    right 0.24s cubic-bezier(0.32, 0.72, 0, 1),
+    transform 0.26s cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 0.2s ease;
+}
+
+/* 시트·상세가 화면을 덮는 동안에는 버튼을 가리지 않도록 내려가 있는다 */
+.buddy.is-tucked {
+  transform: translateY(150%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* 상세 패널(420px)이 열리면 그 왼쪽으로 비켜선다 */
+.buddy.is-shifted {
+  right: 452px;
+}
+
+.buddy__bubble {
+  margin: 0;
+  max-width: 190px;
+  padding: 7px 11px;
+  border-radius: 14px 14px 4px 14px;
+  background: #0052cc;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.4;
+  box-shadow: 0 6px 18px rgba(0, 82, 204, 0.28);
+  pointer-events: none;
+  word-break: keep-all;
+}
+
+.buddy__sprite {
+  width: 104px;
+  height: 130px;
+  border: 0;
+  padding: 0;
+  background-color: transparent;
+  background-image: url('./assets/geumgaengi-typing.webp');
+  background-repeat: no-repeat;
+  /* 8프레임 가로 스트립 — 표시 폭의 8배를 깔고 한 칸씩 민다 */
+  background-size: 832px 130px;
+  background-position: 0 0;
+  cursor: pointer;
+  pointer-events: auto;
+  filter: drop-shadow(0 8px 14px rgba(20, 24, 31, 0.22));
+  animation: buddy-idle 3s ease-in-out infinite;
+}
+
+.buddy__sprite:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+
+/* 타자 치는 중 — 프레임 순환 + 아주 살짝 들썩 */
+.buddy__sprite.is-typing {
+  animation:
+    buddy-type 0.64s steps(8) infinite,
+    buddy-bounce 0.32s ease-in-out infinite;
+}
+
+@keyframes buddy-type {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -832px 0;
+  }
+}
+
+@keyframes buddy-idle {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(-1.2deg);
+  }
+}
+
+@keyframes buddy-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+.buddy-bubble-enter-active,
+.buddy-bubble-leave-active {
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.buddy-bubble-enter-from,
+.buddy-bubble-leave-to {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+/* 금갱이가 대신 처리하는 동안 눌린 버튼에 주는 힌트 */
+.is-buddy-waiting {
+  opacity: 0.72;
+  transition: opacity 0.12s ease;
+}
+
+@media (max-width: 960px) {
+  .buddy {
+    right: 10px;
+    bottom: 56px;
+  }
+
+  .buddy.is-shifted {
+    right: 10px;
+  }
+
+  .buddy__sprite {
+    width: 78px;
+    height: 98px;
+    background-size: 624px 98px;
+  }
+
+  @keyframes buddy-type-mobile {
+    from {
+      background-position: 0 0;
+    }
+    to {
+      background-position: -624px 0;
+    }
+  }
+
+  .buddy__sprite.is-typing {
+    animation:
+      buddy-type-mobile 0.64s steps(8) infinite,
+      buddy-bounce 0.32s ease-in-out infinite;
+  }
+
+  .buddy__bubble {
+    max-width: 150px;
+    font-size: 11.5px;
+  }
+}
+
+/* 모션을 줄이는 사용자에게는 정지 이미지로 */
+@media (prefers-reduced-motion: reduce) {
+  .buddy__sprite,
+  .buddy__sprite.is-typing {
+    animation: none;
+  }
+}

@@ -68,6 +68,49 @@ npm run serve    # 빌드 + 배포와 동일한 서버 실행 (http://localhost:
 - 동점이면 최근에 본 쪽이 앞선다.
 - 순위가 바뀌면 지도 마커는 왕관이 붙거나 떨어진 것만 다시 그린다(전체 재생성 없음).
 
+## 금갱이 (마스코트)
+
+우측 하단에 캐릭터 **금갱이**가 상주한다. 가만히 있지 않고 계속 뭔가 하는 척을 한다.
+
+- **평소** — 살짝 들썩이며 대기하고, 7~14초마다 혼자 1.4초쯤 타자를 치며
+  "좋은 공고 없나 보는 중!" 같은 말풍선을 띄운다.
+- **사용자가 뭔가 누르면** — 실제 동작을 **일부러 0.5초 미루고**(`BUDDY_DELAY`),
+  그동안 8프레임 스프라이트로 버튼을 다다다다 두드린다. 누른 버튼은 살짝 흐려져
+  "금갱이가 처리 중"이라는 게 보인다.
+- **입력창에 타이핑하거나 체크박스를 바꾸면** — 지연 없이 애니메이션만 같이 재생한다.
+
+### 어떻게 거는가
+
+화면마다 핸들러를 고치는 대신 `src/stores/buddy.js` 가 클릭을 **캡처 단계에서 한 번 가로챈다.**
+원본 클릭을 막고 0.5초 뒤 같은 요소에 합성 클릭을 다시 쏘는 방식이라(재귀는 `buddyReplay`
+플래그로 차단) 버튼·칩·탭·폼 제출까지 자동으로 같은 리듬을 탄다. 예외는 세 가지다.
+
+| 대상 | 이유 |
+| --- | --- |
+| `a[href]` 링크 | 0.5초 뒤 합성 클릭으로 새 탭을 열면 팝업 차단에 걸린다 → 애니메이션만 |
+| 지도 캔버스 내부 | 네이버 SDK 가 직접 클릭을 듣는다 → `MapView` 가 `defer()` 로 같은 지연을 건다 |
+| `prefers-reduced-motion` | 지연도 애니메이션도 걸지 않는다(즉시 동작) |
+
+지연이 필요한 곳을 직접 부르고 싶으면 `defer(fn, { delay, message })`, 애니메이션만
+잠깐 재생하려면 `nudge(ms, message)` 를 쓰면 된다.
+
+### 스프라이트
+
+`src/assets/geumgaengi-typing.webp` — 208x260 프레임 8장을 가로로 이어 붙인 스트립(127KB).
+CSS `steps(8)` 로 `background-position` 을 한 칸씩 밀어 재생한다.
+
+원본 시트는 4x2 격자였는데 셀 경계에 1px 파란 줄과 잔여 점이 있었고 행마다 캐릭터의
+세로 위치가 달라 그대로 자르면 애니메이션이 튄다. `scripts/slice-sprite.py` 가 잡티를
+지우고(알파 임계값 + 작은 덩어리 제거) **버튼 받침의 바닥 중앙**을 기준으로 다시 정렬해
+스트립을 만든다. 원본을 새로 받으면 이렇게 다시 돌리면 된다.
+
+```bash
+pip install Pillow
+python3 scripts/slice-sprite.py <원본시트.png> src/assets/geumgaengi-typing.webp
+```
+
+캐릭터 가이드(색상 팔레트·표정·로고)는 `docs/character/geumgaengi-guide.jpg` 에 있다.
+
 ## 저장소와 API
 
 서버는 `server/` 에 있는 Express 앱 하나뿐이고, 정적 파일(`dist/`)과 API 를 같이 서빙한다.
@@ -174,6 +217,7 @@ src/
     community.js         단지별 커뮤니티 (서버 API + 캐시)
     visits.js            단지 방문 카운트·순위 (서버 API)
     server.js            서버 연결 상태(끊기면 안내 배너)
+    buddy.js             금갱이 — 0.5초 지연 게이트 + 클릭 가로채기
   components/
     TopBar / FilterBar / NoticeCard
     MatchPanel           접이식 "내 조건 필터"
@@ -182,12 +226,17 @@ src/
     CommunityPanel       단지 커뮤니티 본문 (탭·팝업 공용)
     CommunityModal       좁은 화면용 레이어 팝업
     RankCrown            방문 순위 왕관
+    BuddyMascot          우측 하단 금갱이(대기/타자 애니메이션)
     MapNotice            지도 키 없음/로드 실패 안내
 server/
   index.js               정적 서빙 + API + /runtime-config.js + /healthz
   api.js                 커뮤니티·방문·프로필 라우트, 익명 쿠키, 쓰기 제한
   db.js                  SQLite 스키마와 쿼리 (node:sqlite)
   seed.js / notices.js   첫 부팅 예시 글 / 공고 id·지역 검증
+assets/
+  geumgaengi-typing.webp 금갱이 타자 스프라이트 (208x260 x 8프레임)
+scripts/slice-sprite.py  원본 시트 → 스프라이트 스트립 재생성 (Pillow)
+docs/character/          캐릭터 가이드 시트
 Dockerfile               node 빌드 → node 단일 프로세스 서빙
 railway.toml             Railway 빌더·헬스체크
 vite.config.js           `공고문/` PDF 를 복사 없이 서빙하는 플러그인

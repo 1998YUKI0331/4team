@@ -4,6 +4,7 @@ import { loadNaverMaps } from '../lib/naverMaps';
 import { formatWonShort } from '../lib/notices';
 import { crownSvg } from '../lib/crown';
 import { filtered, matchOf, select, ui } from '../stores/app';
+import { defer } from '../stores/buddy';
 import { CROWN_RANKS, visitStore } from '../stores/visits';
 
 const SEOUL = { lat: 37.5326, lng: 126.9905 };
@@ -115,12 +116,14 @@ function draw() {
       icon: { content: clusterHtml(g), anchor: new maps.Point(0, 0) },
       zIndex: 10,
     });
-    maps.Event.addListener(marker, 'click', () => {
-      const bounds = new maps.LatLngBounds(new maps.LatLng(g.lat, g.lng), new maps.LatLng(g.lat, g.lng));
-      g.items.forEach((i) => bounds.extend(new maps.LatLng(i.lat, i.lng)));
-      map.fitBounds(bounds, { top: 96, right: 72, bottom: 72, left: 72 });
-      if (map.getZoom() < 12) map.setZoom(12, true);
-    });
+    maps.Event.addListener(marker, 'click', () =>
+      defer(() => {
+        const bounds = new maps.LatLngBounds(new maps.LatLng(g.lat, g.lng), new maps.LatLng(g.lat, g.lng));
+        g.items.forEach((i) => bounds.extend(new maps.LatLng(i.lat, i.lng)));
+        map.fitBounds(bounds, { top: 96, right: 72, bottom: 72, left: 72 });
+        if (map.getZoom() < 12) map.setZoom(12, true);
+      })
+    );
     drawn.push(marker);
   }
 
@@ -131,7 +134,8 @@ function draw() {
       icon: { content: pinHtml(item, item.id === ui.selectedId), anchor: new maps.Point(0, 0) },
       zIndex: item.status === 'open' ? 60 : 40,
     });
-    maps.Event.addListener(marker, 'click', () => select(item.id));
+    // 지도 마커도 금갱이가 0.5초 두드린 뒤 열린다(버튼들과 같은 리듬).
+    maps.Event.addListener(marker, 'click', () => defer(() => select(item.id)));
     markerIndex.set(item.id, { marker, item });
     drawn.push(marker);
   }
