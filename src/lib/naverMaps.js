@@ -1,15 +1,17 @@
+import { NAVER_MAP_CLIENT_ID } from './config';
+
 /**
  * 네이버 지도 JS SDK 로더.
  *
  * NCP 콘솔이 개편되면서 인증 파라미터가 ncpClientId -> ncpKeyId 로 바뀌었다.
  * 어떤 콘솔에서 발급한 키인지에 따라 둘 중 하나만 먹히므로 순서대로 시도한다.
  */
-const CLIENT_ID = import.meta.env.VITE_NAVER_MAP_CLIENT_ID;
-
 const ENDPOINTS = [
   (id) => `https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${id}`,
   (id) => `https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${id}`,
 ];
+
+export const MISSING_KEY = 'MISSING_KEY';
 
 let pending = null;
 
@@ -24,14 +26,21 @@ function loadScript(src) {
   });
 }
 
+export function hasNaverMapKey() {
+  return Boolean(NAVER_MAP_CLIENT_ID);
+}
+
 export function loadNaverMaps() {
   if (window.naver?.maps) return Promise.resolve(window.naver.maps);
   if (pending) return pending;
 
-  if (!CLIENT_ID) {
-    return Promise.reject(
-      new Error('VITE_NAVER_MAP_CLIENT_ID 가 비어 있습니다. .env 파일을 확인한 뒤 개발 서버를 다시 시작하세요.')
+  if (!NAVER_MAP_CLIENT_ID) {
+    const err = new Error(
+      '네이버 지도 키가 설정되지 않았습니다. 로컬은 .env 의 VITE_NAVER_MAP_CLIENT_ID, ' +
+        '배포 환경은 서비스 환경변수 NAVER_MAP_CLIENT_ID 를 확인하세요.'
     );
+    err.code = MISSING_KEY;
+    return Promise.reject(err);
   }
 
   pending = (async () => {
@@ -49,7 +58,7 @@ export function loadNaverMaps() {
     let lastError;
     for (const build of ENDPOINTS) {
       try {
-        await Promise.race([loadScript(build(CLIENT_ID)), authFailure]);
+        await Promise.race([loadScript(build(NAVER_MAP_CLIENT_ID)), authFailure]);
         return window.naver.maps;
       } catch (e) {
         lastError = e;

@@ -1,24 +1,86 @@
 # 청약지도 (fourteam)
 
-네이버 지도 위에 수도권 아파트 분양·임대 공고를 호갱노노/네이버부동산처럼 보여주는 웹앱.
+네이버 지도 위에 수도권 아파트 분양·임대 공고를 호갱노노/네이버부동산처럼 보여 주는 웹앱.
+**Vue 3 + Vite** 로 만들고 **Docker 이미지 한 장**으로 배포한다(Railway GitHub 연동 기준).
 
 ```bash
 npm install
-npm run dev     # http://localhost:5173
+npm run dev      # http://localhost:5173
+npm run build    # dist/ 생성
 ```
 
-## 준비물
+## 화면 구성
 
-`.env` 에 네이버 클라우드 플랫폼 Maps 키가 필요하다 (`.env.example` 참고).
+지도가 메인이고, 기존 단일 HTML 앱(`asis/내집매칭 (1).html`)에 있던 기능을 왼쪽 패널로 합쳤다.
 
-| 키                          | 쓰이는 곳                     |
-| --------------------------- | ----------------------------- |
-| `VITE_NAVER_MAP_CLIENT_ID`  | 브라우저 - Web Dynamic Map    |
-| `NAVER_MAP_CLIENT_SECRET`   | 스크립트 - Geocoding (커밋 X) |
+```
+┌ 상단바 ─ 공고 40건 · 접수중 n건 · 기준일 · 지도영역 동기화 ────────────┐
+│ 사이드바(392px)            │ 지도(메인)                               │
+│  [공고] [내 조건] [커뮤니티] │   커스텀 마커 / 줌 단계별 지역 묶음         │
+│  검색·필터 칩               │   확대·축소, 전체보기, 범례               │
+│  공고 카드 목록             │        └ 단지 클릭 → 상세 패널            │
+└───────────────────────────┴──────────────────────────────────────────┘
+```
 
-NCP 콘솔 > Maps > 애플리케이션에서 **Web Dynamic Map / Geocoding** 을 모두 켜고,
-**웹 서비스 URL** 에 `http://localhost:5173` 을 등록해야 지도가 뜬다.
-(등록이 안 돼 있으면 지도 자리에 안내 화면이 뜬다)
+- **공고 탭** — 검색 / 접수중 / 공급유형 / 지역 / 가격 / 특별공급 칩 필터 + 카드 목록.
+  지도를 움직이면 화면 안쪽 공고만 목록에 남는다(상단바에서 끌 수 있음).
+- **내 조건 탭** — 기존 앱의 "내 조건 입력 → 자격 확인"을 그대로 옮겼다. 켜면 카드·마커에
+  `특별공급 가능 / 자격 확인 필요 / 일반공급 가능` 이 표시되고, 카드의 *왜 내 조건에 맞나요?* 에
+  판단 근거가 나온다. `충족만 보기` 로 목록과 지도를 한 번에 좁힐 수 있다.
+- **커뮤니티 탭** — 단지별로 쓰인 글을 최신순으로 모아 보여 준다. 글을 누르면 그 단지 상세로 간다.
+
+### 옮기면서 고친 것
+
+기존 `evaluate()` 는 `incomeLimit: null`(기관추천·노부모부양·일반공급)을 **소득 0원 제한**으로
+처리해서 실데이터 40건을 넣으면 결과가 늘 0건이었다. `null` 은 "공고문 확인"이라는 뜻이므로
+숫자 비교를 건너뛰고 `확인 필요` 로 표시한다. 마감일이 없는 공고(12건)에서 날짜 계산이 깨지던
+부분도 상태 계산 한 곳으로 모았다. 자동으로 확정할 수 없는 조건(기관추천 대상 여부, 소득 미기재)은
+탈락시키지 않고 `자격 확인 필요` 로 남긴다.
+
+## 지역 커뮤니티 = 단지 상세의 한 탭
+
+별도 탭이던 커뮤니티를 **공고(단지)에 매달았다**. 단지를 고르면 상세 패널에
+`공고 정보 / 지역 커뮤니티` 탭이 생긴다.
+
+- **넓은 화면(≥1180px)** — 상세 패널 안의 탭으로 연다.
+- **좁은 화면** — 패널 폭이 모자라므로 **레이어 팝업**(가운데 다이얼로그, 모바일은 바텀시트)으로 띄운다.
+  창 크기를 바꾸면 열려 있던 커뮤니티가 탭 ↔ 팝업으로 자동으로 옮겨 간다.
+
+글에는 지역·주제·닉네임·공감·댓글이 붙고, 같은 시·도의 다른 단지 글은 *인근 단지 이야기* 로 따로 묶는다.
+저장소는 브라우저 `localStorage` 하나뿐인 데모라 기기 간 공유는 되지 않는다.
+서버를 붙일 때는 `src/stores/community.js` 의 `load()/persist()` 만 API 호출로 바꾸면 된다.
+
+## 배포 (Docker / Railway)
+
+```bash
+docker build -t cheongyak-map .
+docker run --rm -p 8080:8080 -e NAVER_MAP_CLIENT_ID=발급받은키 cheongyak-map
+# 또는
+NAVER_MAP_CLIENT_ID=발급받은키 docker compose up --build
+```
+
+- 멀티스테이지: `node:22-alpine` 에서 빌드 → `nginx:1.29-alpine` 이 `dist/` 를 서빙.
+- **지도 키는 이미지에 굽지 않는다.** 컨테이너가 뜰 때 `docker/10-app-config.sh` 가
+  `NAVER_MAP_CLIENT_ID` 로 `/runtime-config.js` 를 새로 쓰고, 앱은 `window.__APP_CONFIG__` 를
+  먼저 본 뒤 없으면 빌드 타임 `VITE_NAVER_MAP_CLIENT_ID` 로 물러선다(`src/lib/config.js`).
+  → 키를 바꿔도 **재배포만** 하면 되고 재빌드가 필요 없다.
+- 같은 스크립트가 플랫폼이 주는 `PORT` 를 nginx 에 꽂는다(기본 8080). IPv6 스택이 있을 때만
+  `listen [::]` 를 추가하므로 IPv4 전용 환경에서도 뜬다.
+- `/healthz` 는 200 을 돌려주는 헬스체크 경로다(`railway.toml` 의 `healthcheckPath`).
+- 캐시: `/assets/*` 는 1년 immutable, `index.html` 과 `runtime-config.js` 는 `no-store`.
+- 원문 PDF(`공고문/`, 45MB)는 빌드 시 `dist/공고문/` 으로 복사돼 같이 서빙된다.
+
+### Railway 에서
+
+1. New Project → **Deploy from GitHub repo** 로 이 레포를 연결한다.
+   루트의 `railway.toml` 이 Dockerfile 빌더와 헬스체크를 지정하므로 별도 설정이 필요 없다.
+2. 서비스 **Variables** 에 `NAVER_MAP_CLIENT_ID` 를 추가한다. (`PORT` 는 Railway 가 자동 주입)
+3. Settings → Networking 에서 도메인을 만들고, **그 도메인을**
+   NCP 콘솔 > Maps > 애플리케이션의 **웹 서비스 URL** 에 등록한다.
+   등록하지 않으면 인증 실패로 지도 자리에 안내 화면이 뜬다.
+
+키가 없거나 인증에 실패해도 앱은 죽지 않는다. 지도 자리에 원인과 해결 순서가 표시되고
+목록·상세·커뮤니티는 그대로 동작한다.
 
 ## 데이터 파이프라인
 
@@ -51,47 +113,40 @@ npm run data:build      # = data:addresses + data:geocode
 
 ```
 src/
-  lib/naverMaps.js     지도 SDK 로더 (ncpKeyId ↔ ncpClientId 양쪽 시도)
-  lib/notices.js       데이터 가공 - D-day·금액 포맷·필터
+  main.js                앱 진입점
+  App.vue                레이아웃 · 상세 탭/팝업 전환
+  lib/
+    config.js            런타임(window.__APP_CONFIG__) ↔ 빌드타임 env
+    naverMaps.js         지도 SDK 로더 (ncpKeyId ↔ ncpClientId 양쪽 시도)
+    notices.js           데이터 가공 - D-day·금액 포맷·필터
+    matching.js          내 조건 → 특별공급 자격 판정 (asis 로직 이식)
+  stores/
+    app.js               필터·선택·매칭 등 화면 공통 상태
+    community.js         단지별 커뮤니티 (localStorage)
   components/
-    MapView.jsx        지도, 커스텀 마커, 줌 단계별 지역 묶음
-    FilterBar.jsx      검색 / 유형·지역·가격·특별공급 필터
-    NoticeCard.jsx     목록 카드
-    DetailPanel.jsx    상세 - 일정, 자격, 특별공급, 공고문 PDF
-vite.config.js         `공고문/` PDF 를 복사 없이 서빙하는 플러그인
-asis/                  기존 단일 HTML 앱 (내집매칭) — 아래 참고
+    TopBar / FilterBar / NoticeCard / MatchPanel
+    MapView              지도, 커스텀 마커, 줌 단계별 지역 묶음
+    DetailPanel          상세 + [공고 정보 | 지역 커뮤니티] 탭
+    CommunityPanel       단지 커뮤니티 본문 (탭·팝업 공용)
+    CommunityModal       좁은 화면용 레이어 팝업
+    CommunityFeed        사이드바 커뮤니티 탭
+    MapNotice            지도 키 없음/로드 실패 안내
+docker/
+  nginx.conf.template    PORT·IPv6 자리를 치환해 쓰는 서버 설정
+  10-app-config.sh       시작 시 설정 치환 + runtime-config.js 생성
+Dockerfile               node 빌드 → nginx 서빙
+railway.toml             Railway 빌더·헬스체크
+vite.config.js           `공고문/` PDF 를 복사 없이 서빙하는 플러그인
+asis/                    기존 단일 HTML 앱 (참고용, 배포 이미지에서는 제외)
 ```
-
-## 기존 앱(asis)의 "공고 지도" 탭
-
-`asis/내집매칭 (1).html` 은 빌드 없이 도는 단일 HTML 이고 `내집매칭 실행.bat` →
-`serve.ps1`(PowerShell HttpListener) 로 띄운다. 여기에 **공고 지도** 탭을 추가했다.
-
-- 데이터: 같은 폴더의 `notices.geo.json` 을 직접 읽는다. `npm run data:geocode` 가
-  `src/data/` 와 `asis/` 양쪽에 같은 파일을 써 준다.
-- 지도 SDK 는 탭을 **처음 열 때** 로드한다. 숨겨진 상태에서 지도를 만들면 크기가 0이 되므로
-  탭 활성화 시점에 초기화하고, 다시 돌아오면 `map.refresh(true)` 로 타일만 다시 그린다.
-- `serve.ps1` 은 두 군데만 손봤다: `.pdf` MIME 추가, 그리고 `공고문/` 으로 시작하는 요청에
-  한해 상위 폴더까지 찾아보기(45MB PDF 를 복사하지 않으려고). 다른 경로는 상위 폴더를
-  보지 않으므로 `.env` 같은 파일은 노출되지 않는다.
-- HTML 최상단에 `<meta charset="utf-8">` 을 추가했다. 원래 없어서 charset 을 안 붙이는
-  경로(파일 더블클릭 등)로 열면 한글이 깨졌다.
-
-> **중요** — 네이버 지도는 요청 출처(origin)를 대조한다. NCP 콘솔 > Maps > fourteam 의
-> **웹 서비스 URL** 에 `http://localhost:5173`(Vite) 과 `http://localhost:8791`(bat 실행)을
-> 모두 등록해야 한다. `serve.ps1` 은 8791 이 사용 중이면 8792, 8793… 으로 올라가므로
-> 서버 창을 닫지 않고 여러 번 실행했다면 포트가 밀린다. 등록되지 않은 포트로 열면
-> 지도 자리에 현재 주소를 알려 주는 안내가 뜬다.
-
-`asis` 의 **청약 매칭** 탭은 여전히 내장 샘플 12건을 쓴다(같은 폴더에 `notices.json` 이
-없어 자동 로드가 실패). 실데이터 40건을 쓰려면 `notices.json` 을 `asis/` 에 복사하면 되는데,
-그 탭의 `evaluate()` 가 `incomeLimit: null`(기관추천·노부모부양·일반공급)을 소득 0원 제한으로
-처리해서 해당 유형이 전부 탈락한다. 먼저 그 조건 검사를 고치는 편이 좋다.
 
 ## 알아둘 것
 
 - **분양가는 공고문에서 자동 추출한 값**이라 표 형식이 다른 공고에서는 최저/최고가
   실제 주택형 가격이 아닐 수 있다. 상세 화면에서 원문 PDF 로 바로 확인할 수 있게 했다.
+- 자격 판정도 공고문 요약값 기준이라 실제 심사와 다를 수 있다. 청약 전에는 청약홈과
+  원문 공고를 확인해야 한다.
 - LH 매입임대·든든전세처럼 "관할 단위" 공고(n51~n57)는 단지가 특정되지 않아
   관할 시·군 중심에 찍힌다.
-- 오늘(2026-09-15) 기준 접수중 7건 / 마감 21건 / 일정 미기재 12건.
+- `asis/` 는 배포 대상이 아니다(`.dockerignore`). 기존 `내집매칭 실행.bat` + `serve.ps1`
+  경로는 그대로 두어 비교·참고용으로만 남겼다.

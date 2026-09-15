@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import vue from '@vitejs/plugin-vue';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -48,7 +48,7 @@ function noticePdfs() {
 }
 
 export default defineConfig({
-  plugins: [react(), noticePdfs()],
+  plugins: [vue(), noticePdfs()],
   server: { port: 5173, host: true },
-  preview: { port: 5173 },
+  preview: { port: 5173, host: true },
 });

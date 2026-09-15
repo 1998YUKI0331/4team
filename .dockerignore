@@ -1,0 +1,12 @@
+.git
+.github
+node_modules
+dist
+asis
+.env
+.env.*
+!.env.example
+*.log
+npm-debug.log*
+.DS_Store
+scripts/.geocode-cache.json

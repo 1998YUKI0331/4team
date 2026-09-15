@@ -13,7 +13,7 @@ export function parseDate(value) {
   return Number.isNaN(d.getTime()) ? null : d;
 }
 
-const startOfToday = () => {
+export const startOfToday = () => {
   const d = new Date();
   d.setHours(0, 0, 0, 0);
   return d;
@@ -24,6 +24,13 @@ export function formatDate(value) {
   if (!d) return '-';
   const week = '일월화수목금토'[d.getDay()];
   return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}(${week})`;
+}
+
+/** 카드 꼬리표처럼 좁은 자리에 쓰는 표기 */
+export function formatDateShort(value) {
+  const d = parseDate(value);
+  if (!d) return '-';
+  return `${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
 }
 
 /* ------------------------------------------------------------------ 금액 */
@@ -55,6 +62,18 @@ export const CATEGORY_META = {
   기타: { key: '기타', color: '#8b95a1', label: '기타' },
 };
 
+/** 기존 내집매칭 HTML 에서 쓰던 특별공급 표기를 그대로 살린다. */
+export const SPECIAL_LABEL = {
+  신혼부부: '신혼부부 특별공급',
+  신생아: '신생아 특별공급',
+  다자녀: '다자녀가구 특별공급',
+  생애최초: '생애최초 특별공급',
+  노부모부양: '노부모부양 특별공급',
+  기관추천: '기관추천 특별공급',
+  청년: '청년 특별공급',
+  일반공급: '일반공급',
+};
+
 export const SPECIAL_TYPES = ['신혼부부', '신생아', '다자녀', '생애최초', '노부모부양', '기관추천', '일반공급'];
 
 function statusOf(deadline) {
@@ -78,14 +97,20 @@ const PRECISION_LABEL = {
 export const NOTICES = raw.items
   .map((it) => {
     const s = statusOf(it.deadline);
+    const district = it.district ?? null;
     return {
       ...it,
       ...s,
+      district,
       announceDate: parseDate(it.announce),
       deadlineDate: parseDate(it.deadline),
       approxLabel: PRECISION_LABEL[it.precision] ?? null,
       color: (CATEGORY_META[it.category] ?? CATEGORY_META.기타).color,
-      searchText: [it.title, it.region, it.district, it.address, it.agencyName, it.agency]
+      /** 화면 어디서나 쓰는 "서울 동작구" 형태의 표기 */
+      placeLabel: [it.region, district].filter(Boolean).join(' '),
+      /** 커뮤니티에서 "인근 단지"를 묶는 기준 */
+      areaKey: `${it.region ?? ''}|${district ?? ''}`,
+      searchText: [it.title, it.region, district, it.address, it.agencyName, it.agency]
         .filter(Boolean)
         .join(' ')
         .toLowerCase(),
@@ -100,9 +125,32 @@ export const NOTICES = raw.items
     return (b.announceDate ?? 0) - (a.announceDate ?? 0);
   });
 
+export const NOTICE_BY_ID = new Map(NOTICES.map((n) => [n.id, n]));
+
 export const GENERATED_AT = raw.generatedAt;
 
 export const REGIONS = [...new Set(NOTICES.map((n) => n.region).filter(Boolean))];
+
+export const STATUS_LABEL = {
+  open: '접수중',
+  closed: '접수마감',
+  unknown: '일정 확인',
+};
+
+export function statusLabelOf(item) {
+  return item.status === 'open' ? item.label : STATUS_LABEL[item.status];
+}
+
+/** 카드·상세에서 같은 문구를 쓰려고 한 곳에 모아둔다. */
+export function priceLabel(item, { short = false } = {}) {
+  if (item.priceMin != null) {
+    const fmt = short ? formatWonShort : formatWon;
+    return item.priceMax != null && item.priceMax !== item.priceMin
+      ? `${fmt(item.priceMin)} ~ ${fmt(item.priceMax)}`
+      : `${fmt(item.priceMin)}`;
+  }
+  return item.category === '임대' ? '임대조건 공고문 참고' : '분양가 정보 없음';
+}
 
 /* ---------------------------------------------------------------- 필터링 */
 
@@ -113,9 +161,19 @@ export const DEFAULT_FILTERS = {
   specials: [],
   openOnly: false,
   priceMax: null, // 원 단위. 최저 분양가 기준.
+  matchOnly: false, // "내 조건" 탭의 매칭 결과로 거르기
 };
 
-export function applyFilters(list, f) {
+export function createFilters() {
+  return { ...DEFAULT_FILTERS, categories: [], regions: [], specials: [] };
+}
+
+/**
+ * @param list    공고 목록
+ * @param f       필터 값
+ * @param matches 내 조건 매칭 결과 Map(id -> result). matchOnly 일 때만 쓰인다.
+ */
+export function applyFilters(list, f, matches = null) {
   const q = f.q.trim().toLowerCase();
   return list.filter((n) => {
     if (q && !n.searchText.includes(q)) return false;
@@ -127,6 +185,7 @@ export function applyFilters(list, f) {
       if (n.priceMin == null) return false;
       if (n.priceMin > f.priceMax) return false;
     }
+    if (f.matchOnly && matches && !matches.get(n.id)?.ok) return false;
     return true;
   });
 }
@@ -138,6 +197,7 @@ export function countActiveFilters(f) {
     f.regions.length +
     f.specials.length +
     (f.openOnly ? 1 : 0) +
-    (f.priceMax != null ? 1 : 0)
+    (f.priceMax != null ? 1 : 0) +
+    (f.matchOnly ? 1 : 0)
   );
 }

@@ -1,0 +1,16 @@
+# Railway 배포 설정 (GitHub 연동 시 이 파일을 그대로 읽는다)
+#
+# 필요한 서비스 변수
+#   NAVER_MAP_CLIENT_ID  — NCP Maps 의 Client ID(Key ID). 컨테이너 시작 시 주입된다.
+# PORT 는 Railway 가 자동으로 넣어 준다.
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+healthcheckPath = "/healthz"
+healthcheckTimeout = 60
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 5
+numReplicas = 1

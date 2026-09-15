@@ -1,7 +1,7 @@
 {
-  "name": "fourteam-bunyang-map",
+  "name": "cheongyak-map",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,11 +12,10 @@
     "data:build": "node scripts/extract-addresses.mjs && node scripts/geocode.mjs"
   },
   "dependencies": {
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "vue": "^3.5.13"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^5.0.0",
+    "@vitejs/plugin-vue": "^6.0.0",
     "pdfjs-dist": "^4.10.38",
     "vite": "^7.0.0"
   },
