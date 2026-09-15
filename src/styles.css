@@ -148,10 +148,15 @@ textarea {
   display: none;
 }
 
-.sidebar__list {
+/* 내 조건 필터 + 필터 칩 + 목록이 한 덩어리로 스크롤된다. */
+.sidebar__body {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
+}
+
+.sidebar__list {
   padding: 10px 12px 28px;
   display: flex;
   flex-direction: column;
@@ -1117,60 +1122,20 @@ div:has(> .cluster-root) {
   font-variant-numeric: tabular-nums;
 }
 
-/* --------------------------------------------------------- 사이드바 탭 */
-
-.sidebar__tabs {
-  display: flex;
-  gap: 4px;
-  padding: 8px 10px 0;
-  border-bottom: 1px solid var(--line);
-  flex: none;
-}
-
-.sidebar__tabs button {
-  flex: 1;
-  height: 36px;
-  border: 0;
-  border-bottom: 2px solid transparent;
-  background: none;
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  letter-spacing: -0.02em;
-}
-
-.sidebar__tabs button.is-on {
-  color: var(--text);
-  border-bottom-color: var(--brand);
-}
-
-.sidebar__pane {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.sidebar__pane--scroll {
-  overflow-y: auto;
-  overscroll-behavior: contain;
-}
-
 /* ------------------------------------------------------------ 내 조건 */
 
 .matchpanel {
-  padding: 14px 14px 28px;
+  padding: 14px 14px 18px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 9px;
 }
 
 .matchpanel__switch {
   display: flex;
   align-items: flex-start;
   gap: 9px;
-  padding: 11px 12px;
+  padding: 9px 11px;
   border: 1px solid var(--line);
   border-radius: var(--r);
   background: #fbfcfd;
@@ -1216,7 +1181,7 @@ div:has(> .cluster-root) {
 .community__form textarea,
 .community__head select,
 .comment__form input {
-  height: 38px;
+  height: 35px;
   border: 1px solid var(--line);
   border-radius: 9px;
   padding: 0 10px;
@@ -1286,11 +1251,11 @@ div:has(> .cluster-root) {
 .checks {
   border: 1px solid var(--line);
   border-radius: var(--r);
-  padding: 10px 12px 12px;
+  padding: 8px 11px 10px;
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .checks legend {
@@ -1322,10 +1287,6 @@ div:has(> .cluster-root) {
   display: flex;
   flex-direction: column;
   gap: 8px;
-}
-
-.matchpanel__result.is-off {
-  background: #fff;
 }
 
 .matchpanel__count {
@@ -1375,8 +1336,8 @@ div:has(> .cluster-root) {
 
 .notice-tip {
   margin: 0;
-  font-size: 11.5px;
-  line-height: 1.6;
+  font-size: 11px;
+  line-height: 1.55;
   color: var(--muted);
   background: #fff8f5;
   border: 1px solid #ffe2d8;
@@ -1903,56 +1864,6 @@ div:has(> .cluster-root) {
   }
 }
 
-/* ------------------------------------------------------ 커뮤니티 피드 */
-
-.feed {
-  padding: 12px 14px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.feed__lead {
-  margin: 0 0 4px;
-  font-size: 11.5px;
-  color: var(--muted);
-  word-break: keep-all;
-}
-
-.feed__item {
-  text-align: left;
-  border: 1px solid var(--line);
-  border-radius: var(--r);
-  background: #fff;
-  padding: 10px 12px;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.feed__item:hover {
-  border-color: #cdd5dc;
-  box-shadow: var(--shadow-s);
-}
-
-.feed__where {
-  font-size: 11px;
-  color: var(--brand);
-  font-weight: 600;
-}
-
-.feed__title {
-  font-size: 13.5px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
-
-.feed__meta {
-  font-size: 11px;
-  color: var(--muted);
-}
-
 /* ------------------------------------------------------- 지도 부가 UI */
 
 .mapview__tools {
@@ -2037,4 +1948,124 @@ div:has(> .cluster-root) {
   .topbar__match-detail {
     display: none;
   }
+}
+
+/* ------------------------------------------------- 내 조건 필터(접이식) */
+
+.matchbar {
+  border-bottom: 1px solid var(--line);
+  background: #fff;
+}
+
+.matchbar__head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 14px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.matchbar__head b {
+  font-size: 13.5px;
+  letter-spacing: -0.02em;
+  flex: none;
+}
+
+.matchbar__summary {
+  flex: 1;
+  min-width: 0;
+  font-size: 11.5px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.matchbar.is-active .matchbar__summary {
+  color: #0f7a53;
+}
+
+.matchbar__chevron {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  color: var(--muted);
+  transition: transform 0.16s ease;
+}
+
+.matchbar.is-open .matchbar__chevron {
+  transform: rotate(180deg);
+}
+
+.matchbar .matchpanel {
+  padding-top: 0;
+  padding-bottom: 16px;
+}
+
+/* --------------------------------------------------------- 방문 순위 */
+
+.crown-wrap {
+  display: inline-flex;
+  vertical-align: -2px;
+  margin-right: 3px;
+}
+
+.crown-wrap svg {
+  display: block;
+  filter: drop-shadow(0 1px 1px rgba(20, 24, 31, 0.18));
+}
+
+.card__stats {
+  margin-left: auto;
+  display: inline-flex;
+  gap: 8px;
+  flex: none;
+}
+
+.card__visits {
+  color: var(--muted);
+}
+
+/* 방문수 글자색도 메달 색을 따라간다. */
+.card__visits.is-top-1,
+.detail__visits.is-top-1 {
+  color: #b07a06;
+  font-weight: 600;
+}
+
+.card__visits.is-top-2,
+.detail__visits.is-top-2 {
+  color: #6b7682;
+  font-weight: 600;
+}
+
+.card__visits.is-top-3,
+.detail__visits.is-top-3 {
+  color: #9a6127;
+  font-weight: 600;
+}
+
+.detail__visits {
+  margin: 5px 0 0;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+/* 마커 안의 왕관은 이름 앞에 작게 */
+.pin__name .crown {
+  vertical-align: -2px;
+  margin-right: 2px;
+}
+
+.matchpanel__hint {
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
 }

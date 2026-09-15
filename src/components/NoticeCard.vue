@@ -2,6 +2,8 @@
 import { computed, nextTick, ref, watch } from 'vue';
 import { formatDate, priceLabel, statusLabelOf } from '../lib/notices';
 import { communityStore } from '../stores/community';
+import { CROWN_RANKS, RANK_LIMIT, visitStore } from '../stores/visits';
+import RankCrown from './RankCrown.vue';
 
 const props = defineProps({
   item: { type: Object, required: true },
@@ -15,6 +17,11 @@ const el = ref(null);
 const price = computed(() => priceLabel(props.item));
 const tags = computed(() => props.item.specialTypes.filter((t) => t !== '일반공급').slice(0, 4));
 const postCount = computed(() => communityStore.countFor(props.item.id));
+
+const visits = computed(() => visitStore.countFor(props.item.id));
+const rank = computed(() => visitStore.rankOf(props.item.id));
+const crownRank = computed(() => (rank.value && rank.value <= CROWN_RANKS ? rank.value : null));
+const showRank = computed(() => rank.value && rank.value <= RANK_LIMIT);
 
 /** 지도 마커로 고른 단지가 목록 밖에 있으면 스크롤로 끌어온다. */
 watch(
@@ -45,7 +52,10 @@ watch(
       <span v-if="match?.ok" class="badge badge--match" :class="`badge--tier-${match.tier}`">{{ match.tierLabel }}</span>
     </div>
 
-    <h3 class="card__title">{{ item.title }}</h3>
+    <h3 class="card__title">
+      <RankCrown :rank="crownRank" :size="15" />
+      {{ item.title }}
+    </h3>
 
     <p class="card__where">
       {{ item.placeLabel }}
@@ -57,7 +67,12 @@ watch(
     <div class="card__foot">
       <span>공고 {{ formatDate(item.announce) }}</span>
       <span>{{ item.deadline ? `마감 ${formatDate(item.deadline)}` : '마감일 미기재' }}</span>
-      <span v-if="postCount" class="card__posts">💬 {{ postCount }}</span>
+      <span class="card__stats">
+        <span v-if="visits" class="card__visits" :class="crownRank ? `is-top-${crownRank}` : null">
+          방문 {{ visits }}<template v-if="showRank"> · {{ rank }}위</template>
+        </span>
+        <span v-if="postCount">💬 {{ postCount }}</span>
+      </span>
     </div>
 
     <div v-if="tags.length" class="chips">

@@ -8,6 +8,7 @@ import {
   DEFAULT_FILTERS,
 } from '../lib/notices';
 import { createProfile, evaluateAll } from '../lib/matching';
+import { visitStore } from './visits';
 
 /**
  * 화면 전체가 공유하는 상태. 지도·목록·상세가 같은 선택/필터를 보기 때문에
@@ -20,8 +21,8 @@ export const profile = reactive(createProfile());
 export const ui = reactive({
   /** 내 조건(매칭) 사용 여부 */
   matchOn: false,
-  /** 사이드바 탭: list | match | community */
-  sidebarTab: 'list',
+  /** 사이드바 맨 위 "내 조건 필터" 펼침 상태 — 기본은 펼침 */
+  matchOpen: true,
   /** 상세 패널 탭: info | community */
   detailTab: 'info',
   selectedId: null,
@@ -91,7 +92,13 @@ export function matchOf(id) {
   return matches.value?.get(id) ?? null;
 }
 
+/** 상세를 여는 모든 경로가 거쳐 가는 자리. 여기서만 방문수를 센다. */
+function markVisit(id) {
+  if (id && id !== ui.selectedId) visitStore.visit(id);
+}
+
 export function select(id) {
+  markVisit(id);
   ui.selectedId = id;
   ui.detailTab = 'info';
   ui.communityPopup = false;
@@ -106,6 +113,7 @@ export function closeDetail() {
 /** 목록에서 고른 단지로 지도를 옮긴다 */
 export function focusOn(item) {
   if (!item) return;
+  markVisit(item.id);
   ui.selectedId = item.id;
   ui.sheetOpen = false;
   if (item.lat != null && item.lng != null) {

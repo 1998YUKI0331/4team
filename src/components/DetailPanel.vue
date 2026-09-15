@@ -2,7 +2,9 @@
 import { computed } from 'vue';
 import { formatDate, formatWon, priceLabel, statusLabelOf } from '../lib/notices';
 import { communityStore } from '../stores/community';
+import { CROWN_RANKS, RANK_LIMIT, visitStore } from '../stores/visits';
 import CommunityPanel from './CommunityPanel.vue';
+import RankCrown from './RankCrown.vue';
 
 const props = defineProps({
   item: { type: Object, required: true },
@@ -17,6 +19,10 @@ const pdfUrl = computed(() => (props.item.pdf ? `/공고문/${encodeURIComponent
 const specials = computed(() => (props.item.special ?? []).filter((s) => s.type !== '일반공급'));
 const general = computed(() => (props.item.special ?? []).find((s) => s.type === '일반공급'));
 const postCount = computed(() => communityStore.countFor(props.item.id));
+const visits = computed(() => visitStore.countFor(props.item.id));
+const rank = computed(() => visitStore.rankOf(props.item.id));
+const crownRank = computed(() => (rank.value && rank.value <= CROWN_RANKS ? rank.value : null));
+const showRank = computed(() => rank.value && rank.value <= RANK_LIMIT);
 const extras = computed(() =>
   props.item.extra ? Object.entries(props.item.extra).filter(([, v]) => v && typeof v !== 'object') : []
 );
@@ -40,10 +46,16 @@ function specialDetail(s) {
           <span class="chip chip--solid">{{ item.housingType }}</span>
           <span v-if="item.agencyName" class="chip chip--ghost">{{ item.agencyName }}</span>
         </div>
-        <h2>{{ item.title }}</h2>
+        <h2>
+          <RankCrown :rank="crownRank" :size="18" />
+          {{ item.title }}
+        </h2>
         <p class="detail__where">
           {{ item.address ?? item.placeLabel }}
           <em v-if="item.approxLabel" class="detail__approx"> · 위치 {{ item.approxLabel }}</em>
+        </p>
+        <p v-if="visits" class="detail__visits" :class="crownRank ? `is-top-${crownRank}` : null">
+          방문 {{ visits }}회<template v-if="showRank"> · 많이 본 단지 {{ rank }}위</template>
         </p>
       </div>
       <button type="button" class="detail__close" aria-label="닫기" @click="emit('close')">×</button>

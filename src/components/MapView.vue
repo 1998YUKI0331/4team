@@ -2,7 +2,9 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { loadNaverMaps } from '../lib/naverMaps';
 import { formatWonShort } from '../lib/notices';
+import { crownSvg } from '../lib/crown';
 import { filtered, matchOf, select, ui } from '../stores/app';
+import { CROWN_RANKS, visitStore } from '../stores/visits';
 
 const SEOUL = { lat: 37.5326, lng: 126.9905 };
 
@@ -34,11 +36,13 @@ function pinHtml(item, selected) {
   const match = ui.matchOn ? matchOf(item.id) : null;
   const matchClass = match ? (match.ok ? 'is-match' : 'is-unmatch') : '';
   const check = match?.ok ? '<span class="pin__check" title="내 조건 충족">✓</span>' : '';
+  const rank = visitStore.rankOf(item.id);
+  const crown = rank && rank <= CROWN_RANKS ? crownSvg(rank, { size: 13 }) : '';
   return `<div class="pin-root ${selected ? 'is-selected' : ''} is-${esc(item.status)} ${matchClass}" style="--pin:${esc(item.color)}">
     <div class="pin">
       <span class="pin__icon">${APT_ICON}</span>
       <span class="pin__body">
-        <span class="pin__name">${check}${esc(item.title)}</span>
+        <span class="pin__name">${crown}${check}${esc(item.title)}</span>
         <span class="pin__price">${esc(price)}${item.approxLabel ? ' · 근사' : ''}</span>
       </span>
       ${badge}
@@ -188,6 +192,21 @@ onBeforeUnmount(() => {
 });
 
 watch(groups, () => ready.value && draw());
+
+// 방문 순위가 바뀌면 왕관이 붙거나 떨어진 마커만 다시 그린다(전체 재생성 방지).
+watch(
+  () => visitStore
+    .top(CROWN_RANKS)
+    .map((t) => `${t.id}:${t.rank}`)
+    .join(','),
+  (now, prev) => {
+    if (!ready.value) return;
+    const ids = new Set(
+      [...(prev ?? '').split(','), ...now.split(',')].map((s) => s.split(':')[0]).filter(Boolean)
+    );
+    ids.forEach((id) => repaint(id, id === ui.selectedId));
+  }
+);
 
 // 선택 강조는 마커를 다시 만들지 않고 아이콘만 갈아끼운다.
 watch(
