@@ -1,3 +1,5 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>내집매칭</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&family=Noto+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
@@ -315,6 +317,8 @@
   .tag.t-노부모부양{ background:var(--tag-parent-soft); color:var(--tag-parent); }
   .tag.t-청년{ background:var(--tag-youth-soft); color:var(--tag-youth); }
   .tag.t-일반공급{ background:var(--tag-general-soft); color:var(--tag-general); }
+  .tag.t-신생아{ background:var(--tag-first-soft); color:var(--tag-first); }
+  .tag.t-기관추천{ background:var(--accent-soft); color:var(--accent); }
 
   details.why{ margin-top:11px; }
   details.why summary{
@@ -412,6 +416,166 @@
     margin-top:26px; font-size:11.5px; color:var(--ink-faint); text-align:center;
     line-height:1.7;
   }
+
+  /* ---------- 공고 지도 ---------- */
+  /* 마커는 지도 타일 위에 얹히므로 다크모드에서도 색을 바꾸지 않는다 */
+  .map-wrap{
+    position:relative;
+    border:1px solid var(--line); border-radius:14px;
+    box-shadow:var(--shadow); overflow:hidden;
+    background:var(--surface-2);
+  }
+  .map-canvas{ width:100%; height:clamp(460px, calc(100vh - 300px), 760px); }
+
+  .map-toolbar{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    margin-bottom:12px; font-size:12.5px; color:var(--ink-soft);
+  }
+  .map-toolbar .grow{ flex:1; }
+
+  .map-legend{
+    position:absolute; left:12px; bottom:12px; z-index:4;
+    display:flex; gap:12px; align-items:center;
+    background:var(--surface); border:1px solid var(--line);
+    border-radius:999px; padding:6px 13px;
+    font-size:11.5px; color:var(--ink-soft); box-shadow:var(--shadow);
+  }
+  .map-legend span{ display:inline-flex; align-items:center; gap:5px; }
+  .map-legend i{ width:8px; height:8px; border-radius:50%; }
+
+  .map-hint{
+    position:absolute; left:50%; top:12px; transform:translateX(-50%); z-index:4;
+    background:rgba(30,39,51,.82); color:#fff; font-size:11.5px;
+    padding:6px 12px; border-radius:999px; pointer-events:none;
+  }
+
+  .map-alert{
+    position:absolute; inset:0; z-index:6;
+    display:flex; flex-direction:column; justify-content:center; gap:8px;
+    padding:28px clamp(18px,4vw,44px);
+    background:var(--surface); color:var(--ink-soft); font-size:12.5px; line-height:1.8;
+  }
+  .map-alert b{ color:var(--ink); font-family:'Noto Serif KR',serif; font-size:15px; }
+  .map-alert code{
+    background:var(--surface-2); border:1px solid var(--line);
+    border-radius:5px; padding:1px 6px; font-family:'IBM Plex Mono',monospace; font-size:11.5px;
+  }
+  .map-alert ol{ margin:2px 0 0; padding-left:18px; }
+
+  /* 목록 (왼쪽 패널) */
+  .map-list{ max-height:min(46vh,420px); overflow:auto; margin:0 -6px; padding:0 6px; }
+  .map-row{
+    width:100%; text-align:left; cursor:pointer;
+    background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    padding:9px 11px; margin-bottom:7px; font:inherit; color:inherit;
+    display:block;
+  }
+  .map-row:hover{ border-color:var(--accent); }
+  .map-row.on{ border-color:var(--accent); box-shadow:0 0 0 1px var(--accent); }
+  .map-row-top{ display:flex; align-items:center; gap:6px; margin-bottom:3px; }
+  .map-row-cat{ font-size:11px; font-weight:700; }
+  .map-row-title{ font-size:13px; font-weight:700; line-height:1.35; margin-bottom:2px; }
+  .map-row-sub{ font-size:11.5px; color:var(--ink-faint); }
+  .map-empty{ font-size:12.5px; color:var(--ink-faint); text-align:center; padding:26px 8px; }
+
+  /* 상세 카드 (지도 위) */
+  .map-detail{
+    position:absolute; right:12px; top:12px; bottom:12px; width:296px; z-index:5;
+    background:var(--surface); border:1px solid var(--line); border-radius:12px;
+    box-shadow:var(--shadow); overflow:auto; padding:14px 15px 16px;
+  }
+  .map-detail h3{ font-family:'Noto Serif KR',serif; font-size:15.5px; margin:0 0 4px; }
+  .map-detail .map-close{
+    position:absolute; right:10px; top:10px;
+    width:24px; height:24px; border:none; border-radius:7px; cursor:pointer;
+    background:var(--surface-2); color:var(--ink-soft); font:inherit; font-size:15px; line-height:1;
+  }
+  .map-detail-loc{ font-size:12px; color:var(--ink-soft); margin-bottom:10px; }
+  .map-approx{ color:var(--warn); }
+  .map-price{
+    background:var(--surface-2); border-radius:9px; padding:9px 11px; margin-bottom:11px;
+  }
+  .map-price .lbl{ font-size:11px; color:var(--ink-faint); display:block; }
+  .map-price .val{ font-family:'IBM Plex Mono','Noto Sans KR',monospace; font-size:14.5px; font-weight:600; }
+  .map-facts{ margin:0 0 11px; font-size:12px; }
+  .map-facts div{ display:flex; gap:9px; padding:4px 0; border-bottom:1px dashed var(--line); }
+  .map-facts dt{ width:62px; flex:none; color:var(--ink-faint); }
+  .map-facts dd{ margin:0; flex:1; word-break:keep-all; }
+  .map-detail .tags{ margin:0 0 12px; }
+  .map-actions{ display:flex; gap:6px; }
+  .map-actions a, .map-actions button{
+    flex:1; text-align:center; text-decoration:none; cursor:pointer;
+    font:inherit; font-size:12px; font-weight:700;
+    border:1px solid var(--line); border-radius:8px; padding:8px 6px;
+    background:var(--surface-2); color:var(--ink);
+  }
+  .map-actions .primary{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+  .map-note{ font-size:11px; color:var(--ink-faint); line-height:1.7; margin:10px 0 0; }
+
+  @media (max-width:840px){
+    .map-detail{ left:12px; width:auto; top:auto; max-height:52%; }
+    .map-legend{ bottom:auto; top:12px; left:12px; }
+    .map-hint{ display:none; }
+  }
+
+  /* ---- 지도 마커 (네이버 마커 래퍼가 내용을 자르지 않도록) ---- */
+  div:has(> .mp-pin-root), div:has(> .mp-cl-root){ overflow:visible !important; }
+
+  .mp-pin-root{
+    position:absolute; left:0; top:0; transform:translate(-50%,-100%);
+    cursor:pointer; filter:drop-shadow(0 3px 7px rgba(30,39,51,.28));
+  }
+  .mp-pin{
+    display:flex; align-items:center; gap:6px;
+    height:33px; padding:0 9px 0 5px; max-width:190px;
+    background:#fff; border:1.5px solid var(--mp); border-radius:9px;
+  }
+  .mp-ico{
+    width:22px; height:22px; flex:none; border-radius:6px;
+    background:var(--mp); color:#fff; display:grid; place-items:center;
+  }
+  .mp-ico svg{ width:14px; height:14px; }
+  .mp-txt{ min-width:0; line-height:1.15; }
+  .mp-name{
+    display:block; font-size:11.5px; font-weight:700; color:#1E2733;
+    max-width:124px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .mp-sub{ display:block; font-size:10px; font-weight:600; color:var(--mp); }
+  .mp-dday{
+    flex:none; font-family:'IBM Plex Mono',monospace;
+    font-size:9.5px; font-weight:600; color:#fff;
+    background:#5C6A78; border-radius:4px; padding:2px 4px;
+  }
+  .mp-dday.urgent{ background:#B5522E; }
+  .mp-stem{
+    position:absolute; left:50%; bottom:-5px; width:9px; height:9px;
+    background:#fff; border-right:1.5px solid var(--mp); border-bottom:1.5px solid var(--mp);
+    transform:translateX(-50%) rotate(45deg);
+  }
+  .mp-pin-root.closed{ opacity:.8; filter:grayscale(.5) drop-shadow(0 2px 5px rgba(30,39,51,.2)); }
+  .mp-pin-root.on{ z-index:400; transform:translate(-50%,-100%) scale(1.08); opacity:1; }
+  .mp-pin-root.on .mp-pin{ background:var(--mp); }
+  .mp-pin-root.on .mp-name{ color:#fff; }
+  .mp-pin-root.on .mp-sub{ color:rgba(255,255,255,.88); }
+  .mp-pin-root.on .mp-ico{ background:rgba(255,255,255,.22); }
+  .mp-pin-root.on .mp-stem{ background:var(--mp); }
+
+  .mp-cl-root{ position:absolute; left:0; top:0; transform:translate(-50%,-50%); cursor:pointer; }
+  .mp-cl{
+    width:var(--size); height:var(--size); border-radius:50%;
+    background:#1B3F5C; border:3px solid rgba(255,255,255,.94);
+    box-shadow:0 5px 16px rgba(30,39,51,.35);
+    color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    line-height:1.1; position:relative;
+  }
+  .mp-cl b{ font-family:'Noto Serif KR',serif; font-size:17px; }
+  .mp-cl span{ font-size:10px; max-width:88%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .mp-cl i{
+    position:absolute; top:-3px; right:-3px; min-width:18px; height:18px; padding:0 4px;
+    border-radius:999px; background:#276B4D; border:2px solid #fff; color:#fff;
+    font-family:'IBM Plex Mono',monospace; font-size:10px; font-style:normal; font-weight:600;
+    display:grid; place-items:center;
+  }
 </style>
 
 <div class="shell">
@@ -429,6 +593,7 @@
 
   <div class="tabbar">
     <button type="button" class="tab active" data-view="match">청약 매칭</button>
+    <button type="button" class="tab" data-view="map">공고 지도</button>
     <button type="button" class="tab" data-view="community">지역 커뮤니티</button>
   </div>
 
@@ -538,6 +703,77 @@
         </div>
       </div>
       <div class="cards" id="cards"></div>
+    </div>
+
+  </div>
+
+  </section>
+
+  <section id="view-map" class="view" hidden>
+
+  <div class="disclaimer">
+    <div class="mk">!</div>
+    <div><b>위치 안내.</b> 단지 위치는 <span class="num">공고문</span>의 &ldquo;공급위치&rdquo;를 읽어 좌표로 바꾼 값이에요. 지번까지 확인된 공고가 아니면 마커에 <b>근사</b> 표시가 붙고, LH 매입임대처럼 단지가 특정되지 않는 공고는 관할 시·군 중심에 표시됩니다.</div>
+  </div>
+
+  <div class="layout">
+
+    <!-- ============ 지도 필터 ============ -->
+    <div class="panel form">
+      <h2>지도에서 찾기</h2>
+      <div class="sub" id="mapDataLabel">공고 데이터 불러오는 중…</div>
+
+      <div class="field">
+        <label for="mapSearch">단지·지역 검색</label>
+        <input type="text" id="mapSearch" placeholder="예: 검암, 상도동, 자이">
+      </div>
+
+      <div class="field">
+        <label for="mapRegion">지역</label>
+        <select id="mapRegion"><option value="전체">전체 지역 보기</option></select>
+      </div>
+
+      <div class="field">
+        <label for="mapSpecial">특별공급 유형</label>
+        <select id="mapSpecial"><option value="전체">전체</option></select>
+      </div>
+
+      <fieldset>
+        <legend>공급 유형</legend>
+        <label class="chk"><input type="checkbox" class="mapCat" value="민간분양" checked> 민간분양</label>
+        <label class="chk"><input type="checkbox" class="mapCat" value="공공분양" checked> 공공분양</label>
+        <label class="chk"><input type="checkbox" class="mapCat" value="임대" checked> 임대</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>표시 조건</legend>
+        <label class="chk"><input type="checkbox" id="mapOpenOnly"> 접수중인 공고만 보기</label>
+        <label class="chk"><input type="checkbox" id="mapInView" checked> 지도에 보이는 곳만 목록에</label>
+      </fieldset>
+
+      <div class="results-head" style="margin-bottom:10px;">
+        <div class="results-count"><b id="mapCount">0</b>건</div>
+        <button type="button" id="mapReset" class="linklike">필터 초기화</button>
+      </div>
+
+      <div class="map-list" id="mapList"></div>
+    </div>
+
+    <!-- ============ 지도 ============ -->
+    <div>
+      <div class="map-toolbar">
+        <span class="grow" id="mapStatus">마커를 누르면 공고 상세가 열려요.</span>
+      </div>
+      <div class="map-wrap" id="mapWrap">
+        <div class="map-canvas" id="mapCanvas"></div>
+        <div class="map-legend">
+          <span><i style="background:#B5522E"></i>민간분양</span>
+          <span><i style="background:#1B3F5C"></i>공공분양</span>
+          <span><i style="background:#2E7D6B"></i>임대</span>
+        </div>
+        <div class="map-hint" id="mapHint" hidden>동그라미를 누르면 단지별로 펼쳐집니다</div>
+        <div id="mapDetail"></div>
+      </div>
     </div>
 
   </div>
@@ -1049,9 +1285,10 @@
     el.addEventListener(evt, function(){ renderSafe(); });
   });
 
-  // ================= 탭 전환 (청약 매칭 / 지역 커뮤니티) =================
+  // ================= 탭 전환 (청약 매칭 / 공고 지도 / 지역 커뮤니티) =================
   var TAB_VIEWS = {
     match: document.getElementById('view-match'),
+    map: document.getElementById('view-map'),
     community: document.getElementById('view-community')
   };
   Array.prototype.forEach.call(document.querySelectorAll('.tab'), function(tabBtn){
@@ -1062,7 +1299,456 @@
         TAB_VIEWS[key].hidden = (key !== tabBtn.dataset.view);
       });
       if (tabBtn.dataset.view === 'community') renderCommunity();
+      if (tabBtn.dataset.view === 'map') activateMapView();
     });
+  });
+
+  // ================= 공고 지도 =================
+  // 좌표가 들어간 notices.geo.json 을 따로 읽는다.
+  // (notices.json 에는 좌표도 주소도 없어서, 공고문 PDF 에서 "공급위치"를 뽑아
+  //  네이버 Geocoding 으로 좌표화한 파일이다. 만드는 법은 ../README.md 참고)
+  var MAP_CLIENT_ID = '11dvzg2qrl';          // NCP Maps > 애플리케이션 fourteam
+  var GEO_FILE = './notices.geo.json';
+  var PDF_BASE = '/공고문/';                  // serve.ps1 이 상위 폴더에서 찾아 준다
+  var MAP_COLOR = { '민간분양':'#B5522E', '공공분양':'#1B3F5C', '임대':'#2E7D6B', '기타':'#5C6A78' };
+  var MAP_APPROX = { dong:'동 단위 근사', gu:'구 단위 근사', district:'시·군 단위 근사', region:'시·도 단위 근사' };
+  var APT_SVG = '<svg viewBox="0 0 16 16" aria-hidden="true">'+
+    '<path d="M1.6 14.6V6.1L8 1.8l6.4 4.3v8.5H9.7v-3.4H6.3v3.4H1.6z" fill="currentColor"/>'+
+    '<rect x="3.5" y="7.2" width="1.5" height="1.5" rx=".3" fill="#fff" opacity=".9"/>'+
+    '<rect x="7.3" y="7.2" width="1.5" height="1.5" rx=".3" fill="#fff" opacity=".9"/>'+
+    '<rect x="11" y="7.2" width="1.5" height="1.5" rx=".3" fill="#fff" opacity=".9"/>'+
+    '<rect x="3.5" y="10.2" width="1.5" height="1.5" rx=".3" fill="#fff" opacity=".9"/>'+
+    '<rect x="11" y="10.2" width="1.5" height="1.5" rx=".3" fill="#fff" opacity=".9"/></svg>';
+
+  var MV = {
+    started:false, ready:false, map:null, maps:null,
+    items:[], shown:[], markers:[], pinById:{}, selected:null,
+    bounds:null, zoom:11
+  };
+
+  function mapEsc(s){
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+  function mapDate(v){
+    if (!v) return null;
+    var m = String(v).match(/(\d{4})-(\d{2})-(\d{2})/) || String(v).match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/);
+    return m ? new Date(Number(m[1]), Number(m[2])-1, Number(m[3])) : null;
+  }
+  function mapFmtDate(v){
+    var d = mapDate(v);
+    if (!d) return '-';
+    return d.getFullYear()+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+String(d.getDate()).padStart(2,'0');
+  }
+  function mapWon(n){
+    if (n == null) return null;
+    var eok = Math.floor(n/1e8), man = Math.round((n%1e8)/1e4);
+    if (eok > 0) return man > 0 ? eok+'억 '+man.toLocaleString()+'만' : eok+'억';
+    return man.toLocaleString()+'만';
+  }
+  function mapWonShort(n){
+    if (n == null) return null;
+    if (n >= 1e8){ var e = n/1e8; return (e >= 10 ? Math.round(e) : e.toFixed(1).replace(/\.0$/,''))+'억'; }
+    return Math.round(n/1e4).toLocaleString()+'만';
+  }
+  function mapStat(item){
+    var d = mapDate(item.deadline);
+    if (!d) return { state:'unknown', label:'일정 확인', dleft:null };
+    var left = daysBetween(REF_DATE, d);
+    if (left < 0) return { state:'closed', label:'마감', dleft:left };
+    return { state:'open', label:(left === 0 ? '오늘 마감' : 'D-'+left), dleft:left };
+  }
+
+  function mapAlert(html){
+    var box = document.createElement('div');
+    box.className = 'map-alert';
+    box.innerHTML = html;
+    document.getElementById('mapWrap').appendChild(box);
+  }
+
+  /* ---- 네이버 지도 SDK ---- */
+  function loadNaverSdk(done, fail){
+    if (window.naver && window.naver.maps) { done(window.naver.maps); return; }
+    // NCP 콘솔 개편으로 인증 파라미터가 ncpClientId -> ncpKeyId 로 바뀌었다. 순서대로 시도.
+    var urls = [
+      'https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=' + MAP_CLIENT_ID,
+      'https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=' + MAP_CLIENT_ID
+    ];
+    var i = 0, loaded = false, failed = false;
+
+    // 인증 성공 여부는 스크립트 로드가 아니라 지도를 만드는 시점에 판정된다.
+    // 그래서 로드 완료와 별개로 언제든 호출될 수 있게 둔다.
+    window.navermap_authFailure = function(){
+      if (failed) return;
+      failed = true;
+      fail('네이버 지도 인증에 실패했어요. 현재 주소가 등록돼 있지 않습니다.');
+    };
+
+    (function next(){
+      if (i >= urls.length){
+        if (!loaded && !failed){ failed = true; fail('지도 스크립트를 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'); }
+        return;
+      }
+      var el = document.createElement('script');
+      el.src = urls[i++];
+      el.async = true;
+      el.onload = function(){
+        if (loaded || failed) return;
+        if (window.naver && window.naver.maps){ loaded = true; done(window.naver.maps); }
+        else next();
+      };
+      el.onerror = next;
+      document.head.appendChild(el);
+    })();
+  }
+
+  /* ---- 탭이 처음 열릴 때만 초기화 (숨겨진 상태에서 만들면 지도 크기가 0이 된다) ---- */
+  function activateMapView(){
+    if (MV.started){
+      if (MV.map) MV.map.refresh(true);   // 숨겼다 다시 보이면 타일을 다시 그린다
+      return;
+    }
+    MV.started = true;
+
+    fetch(GEO_FILE, {cache:'no-store'})
+      .then(function(res){
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function(data){
+        var items = (data && data.items) || [];
+        if (!items.length) throw new Error('공고가 비어 있어요.');
+        MV.items = items;
+        document.getElementById('mapDataLabel').textContent =
+          'notices.geo.json · 공고 ' + items.length + '건 (좌표 ' + items.filter(function(i){ return i.lat != null; }).length + '건)';
+        buildMapFilters();
+        startMap();
+      })
+      .catch(function(err){
+        document.getElementById('mapDataLabel').textContent = '데이터를 불러오지 못했어요.';
+        mapAlert(
+          '<b>공고 좌표 파일을 찾지 못했어요</b>' +
+          '<div>이 폴더에 <code>notices.geo.json</code> 이 있어야 지도를 그릴 수 있어요. ' +
+          '프로젝트 루트에서 아래를 실행하면 만들어집니다.</div>' +
+          '<ol><li><code>npm install</code></li><li><code>npm run data:build</code></li></ol>' +
+          '<div>오류: ' + mapEsc(err.message) + '</div>'
+        );
+      });
+  }
+
+  function startMap(){
+    loadNaverSdk(function(maps){
+      MV.maps = maps;
+      MV.map = new maps.Map(document.getElementById('mapCanvas'), {
+        center: new maps.LatLng(37.5326, 126.9905),
+        zoom: 11, minZoom: 7, maxZoom: 19,
+        zoomControl: true,
+        // 상세 카드가 오른쪽을 덮으므로 확대/축소 버튼은 왼쪽 위에 둔다
+        zoomControlOptions: { position: maps.Position.LEFT_TOP, style: maps.ZoomControlStyle.SMALL },
+        mapDataControl: false, scaleControl: false
+      });
+      MV.ready = true;
+      maps.Event.addListener(MV.map, 'idle', function(){
+        MV.zoom = MV.map.getZoom();
+        MV.bounds = MV.map.getBounds();
+        mapRefresh();
+      });
+      mapRefresh();
+    }, function(msg){
+      mapAlert(
+        '<b>지도를 불러오지 못했어요</b>' +
+        '<div>' + mapEsc(msg) + '</div>' +
+        '<ol>' +
+        '<li>NCP 콘솔 &gt; <b>Maps</b> &gt; 애플리케이션(fourteam) 에서 <b>Web Dynamic Map</b> 이용 신청</li>' +
+        '<li><b>웹 서비스 URL</b> 에 <code>' + mapEsc(location.origin) + '</code> 등록 ' +
+        '(실행할 때마다 포트가 바뀔 수 있으니 <code>http://localhost:8791</code> 부터 몇 개 등록해 두면 편해요)</li>' +
+        '</ol>'
+      );
+    });
+  }
+
+  /* ---- 필터 UI 채우기 ---- */
+  function buildMapFilters(){
+    var regions = [], specials = [];
+    MV.items.forEach(function(it){
+      if (it.region && regions.indexOf(it.region) < 0) regions.push(it.region);
+      (it.specialTypes || []).forEach(function(t){
+        if (t !== '일반공급' && specials.indexOf(t) < 0) specials.push(t);
+      });
+    });
+    var rsel = document.getElementById('mapRegion');
+    regions.forEach(function(r){
+      var o = document.createElement('option'); o.value = r; o.textContent = r; rsel.appendChild(o);
+    });
+    var ssel = document.getElementById('mapSpecial');
+    specials.forEach(function(s){
+      var o = document.createElement('option'); o.value = s; o.textContent = s + ' 특별공급'; ssel.appendChild(o);
+    });
+  }
+
+  function mapFilterValues(){
+    var cats = [];
+    Array.prototype.forEach.call(document.querySelectorAll('.mapCat'), function(c){
+      if (c.checked) cats.push(c.value);
+    });
+    return {
+      q: document.getElementById('mapSearch').value.trim().toLowerCase(),
+      region: document.getElementById('mapRegion').value,
+      special: document.getElementById('mapSpecial').value,
+      cats: cats,
+      openOnly: document.getElementById('mapOpenOnly').checked,
+      inView: document.getElementById('mapInView').checked
+    };
+  }
+
+  /* ---- 필터 -> 마커 -> 목록 ---- */
+  function mapRefresh(){
+    var f = mapFilterValues();
+    MV.shown = MV.items.filter(function(it){
+      if (it.lat == null) return false;
+      if (f.region !== '전체' && it.region !== f.region) return false;
+      if (f.cats.indexOf(it.category) < 0) return false;
+      if (f.special !== '전체' && (it.specialTypes || []).indexOf(f.special) < 0) return false;
+      if (f.openOnly && mapStat(it).state !== 'open') return false;
+      if (f.q){
+        var hay = [it.title, it.region, it.district, it.address, it.agencyName].join(' ').toLowerCase();
+        if (hay.indexOf(f.q) < 0) return false;
+      }
+      return true;
+    });
+    mapDrawMarkers();
+    mapRenderList(f.inView);
+  }
+
+  function mapGroups(){
+    // 멀리서 보면 시·군·구 단위로 묶는다. 1건뿐이면 묶지 않고 그대로 보여준다.
+    if (MV.zoom >= 12) return { clusters:[], singles:MV.shown };
+    var byRegion = MV.zoom <= 9;
+    var bucket = {};
+    MV.shown.forEach(function(it){
+      var key = byRegion ? (it.region || '기타') : ((it.region || '') + ' ' + (it.district || '')).trim();
+      if (!bucket[key]) bucket[key] = { name: byRegion ? (it.region || '기타') : (it.district || it.region), items: [] };
+      bucket[key].items.push(it);
+    });
+    var clusters = [], singles = [];
+    Object.keys(bucket).forEach(function(k){
+      var g = bucket[k];
+      if (g.items.length === 1){ singles.push(g.items[0]); return; }
+      var lat = 0, lng = 0;
+      g.items.forEach(function(i){ lat += i.lat; lng += i.lng; });
+      g.lat = lat / g.items.length;
+      g.lng = lng / g.items.length;
+      clusters.push(g);
+    });
+    return { clusters:clusters, singles:singles };
+  }
+
+  function pinHtml(item, on){
+    var st = mapStat(item);
+    var sub = item.priceMin != null ? mapWonShort(item.priceMin) + '~' : item.category;
+    if (item.precision && item.precision !== 'lot') sub += ' · 근사';
+    var dday = st.state === 'open'
+      ? '<span class="mp-dday' + (st.dleft <= 3 ? ' urgent' : '') + '">' + mapEsc(st.label) + '</span>' : '';
+    return '<div class="mp-pin-root ' + (on ? 'on' : '') + ' ' + st.state + '" style="--mp:' +
+      (MAP_COLOR[item.category] || MAP_COLOR['기타']) + '">' +
+      '<div class="mp-pin">' +
+        '<span class="mp-ico">' + APT_SVG + '</span>' +
+        '<span class="mp-txt"><span class="mp-name">' + mapEsc(item.title) + '</span>' +
+        '<span class="mp-sub">' + mapEsc(sub) + '</span></span>' + dday +
+      '</div><span class="mp-stem"></span></div>';
+  }
+
+  function clusterHtml(g){
+    var open = g.items.filter(function(i){ return mapStat(i).state === 'open'; }).length;
+    return '<div class="mp-cl-root"><div class="mp-cl" style="--size:' +
+      Math.min(84, 54 + g.items.length * 4) + 'px"><b>' + g.items.length + '</b><span>' +
+      mapEsc(g.name) + '</span>' + (open ? '<i>' + open + '</i>' : '') + '</div></div>';
+  }
+
+  function mapDrawMarkers(){
+    if (!MV.ready) return;
+    var maps = MV.maps, map = MV.map;
+    MV.markers.forEach(function(m){ m.setMap(null); });
+    MV.markers = [];
+    MV.pinById = {};
+
+    var g = mapGroups();
+    document.getElementById('mapHint').hidden = g.clusters.length === 0;
+
+    g.clusters.forEach(function(group){
+      var marker = new maps.Marker({
+        map: map, position: new maps.LatLng(group.lat, group.lng),
+        icon: { content: clusterHtml(group), anchor: new maps.Point(0, 0) }, zIndex: 10
+      });
+      maps.Event.addListener(marker, 'click', function(){
+        var b = new maps.LatLngBounds(new maps.LatLng(group.lat, group.lng), new maps.LatLng(group.lat, group.lng));
+        group.items.forEach(function(i){ b.extend(new maps.LatLng(i.lat, i.lng)); });
+        map.fitBounds(b, { top:80, right:60, bottom:60, left:60 });
+        if (map.getZoom() < 12) map.setZoom(12, true);
+      });
+      MV.markers.push(marker);
+    });
+
+    g.singles.forEach(function(item){
+      var marker = new maps.Marker({
+        map: map, position: new maps.LatLng(item.lat, item.lng),
+        icon: { content: pinHtml(item, item.id === MV.selected), anchor: new maps.Point(0, 0) },
+        zIndex: mapStat(item).state === 'open' ? 60 : 40
+      });
+      maps.Event.addListener(marker, 'click', function(){ mapSelect(item.id, false); });
+      MV.pinById[item.id] = { marker: marker, item: item };
+      MV.markers.push(marker);
+    });
+  }
+
+  function mapRepaintPin(id, on){
+    var e = MV.pinById[id];
+    if (!e) return;
+    e.marker.setIcon({ content: pinHtml(e.item, on), anchor: new MV.maps.Point(0, 0) });
+    e.marker.setZIndex(on ? 200 : (mapStat(e.item).state === 'open' ? 60 : 40));
+  }
+
+  function mapSelect(id, pan){
+    var prev = MV.selected;
+    MV.selected = id;
+    if (prev && prev !== id) mapRepaintPin(prev, false);
+    mapRepaintPin(id, true);
+
+    var item = null;
+    MV.items.forEach(function(i){ if (i.id === id) item = i; });
+    if (!item) return;
+    if (pan && MV.ready && item.lat != null){
+      MV.map.morph(new MV.maps.LatLng(item.lat, item.lng), Math.max(MV.map.getZoom(), 14));
+    }
+    mapRenderDetail(item);
+    Array.prototype.forEach.call(document.querySelectorAll('.map-row'), function(r){
+      r.classList.toggle('on', r.getAttribute('data-id') === id);
+    });
+  }
+
+  function mapRenderList(inView){
+    var list = MV.shown;
+    if (inView && MV.bounds){
+      var inside = list.filter(function(i){ return MV.bounds.hasLatLng(new MV.maps.LatLng(i.lat, i.lng)); });
+      if (inside.length) list = inside;
+    }
+    list = list.slice().sort(function(a, b){
+      var sa = mapStat(a), sb = mapStat(b);
+      var rank = { open:0, unknown:1, closed:2 };
+      if (rank[sa.state] !== rank[sb.state]) return rank[sa.state] - rank[sb.state];
+      if (sa.state === 'open') return sa.dleft - sb.dleft;
+      return (mapDate(b.announce) || 0) - (mapDate(a.announce) || 0);
+    });
+
+    document.getElementById('mapCount').textContent = list.length;
+    var box = document.getElementById('mapList');
+    box.innerHTML = '';
+    if (!list.length){
+      box.innerHTML = '<div class="map-empty">조건에 맞는 공고가 없어요.<br>필터를 넓히거나 지도를 축소해 보세요.</div>';
+      return;
+    }
+    var hidden = MV.shown.length - list.length;
+    list.forEach(function(it){
+      var st = mapStat(it);
+      var row = document.createElement('button');
+      row.type = 'button';
+      row.className = 'map-row' + (it.id === MV.selected ? ' on' : '');
+      row.setAttribute('data-id', it.id);
+      row.innerHTML =
+        '<div class="map-row-top">' +
+          '<span class="dday-pill ' + (st.state === 'closed' ? 'closed' : (st.dleft !== null && st.dleft <= 7 ? 'warn' : '')) + '" style="font-size:11px;padding:2px 8px;">' + mapEsc(st.label) + '</span>' +
+          '<span class="map-row-cat" style="color:' + (MAP_COLOR[it.category] || MAP_COLOR['기타']) + '">' + mapEsc(it.category) + '</span>' +
+        '</div>' +
+        '<div class="map-row-title">' + mapEsc(it.title) + '</div>' +
+        '<div class="map-row-sub">' + mapEsc((it.region || '') + ' ' + (it.district || '')) +
+          (it.priceMin != null ? ' · ' + mapWonShort(it.priceMin) + '~' + mapWonShort(it.priceMax) : '') + '</div>';
+      row.addEventListener('click', function(){ mapSelect(it.id, true); });
+      box.appendChild(row);
+    });
+    if (hidden > 0){
+      var more = document.createElement('div');
+      more.className = 'map-empty';
+      more.style.padding = '8px';
+      more.textContent = '지도 밖에 ' + hidden + '건 더 있어요.';
+      box.appendChild(more);
+    }
+  }
+
+  function mapRenderDetail(it){
+    var st = mapStat(it);
+    var approx = MAP_APPROX[it.precision];
+    var specials = (it.special || []).filter(function(s){ return s.type !== '일반공급'; });
+    var tags = specials.map(function(s){
+      return '<span class="tag t-' + mapEsc(s.type) + '">' + mapEsc(s.type) + '</span>';
+    }).join('');
+
+    var price = it.priceMin != null
+      ? mapWon(it.priceMin) + ' ~ ' + mapWon(it.priceMax)
+      : (it.category === '임대' ? '임대조건 공고문 참고' : '공고문 참고');
+
+    var cond = specials.map(function(s){
+      var bits = [];
+      if (s.requiresNoHouse) bits.push('무주택');
+      if (s.minChildren) bits.push('자녀 ' + s.minChildren + '명↑');
+      if (s.maxMarriageYears) bits.push('혼인 ' + s.maxMarriageYears + '년 내');
+      if (s.incomeLimit) bits.push('소득 ' + s.incomeLimit + '%↓');
+      return '<div><dt>' + mapEsc(s.type) + '</dt><dd>' + (bits.join(' · ') || '소득요건 없음') + '</dd></div>';
+    }).join('');
+
+    var pdf = it.pdf
+      ? '<a class="primary" href="' + PDF_BASE + encodeURIComponent(it.pdf) + '" target="_blank" rel="noopener">공고문 원문</a>'
+      : '';
+    var site = it.url ? '<a href="' + mapEsc(it.url) + '" target="_blank" rel="noopener">기관 홈페이지</a>' : '';
+
+    document.getElementById('mapDetail').innerHTML =
+      '<div class="map-detail">' +
+        '<button type="button" class="map-close" id="mapDetailClose" aria-label="닫기">×</button>' +
+        '<div class="agency-row"><span class="agency-badge">' + mapEsc(it.agency) + '</span>' +
+          '<span class="housing-type">' + mapEsc(it.housingType) + '</span></div>' +
+        '<h3>' + mapEsc(it.title) + '</h3>' +
+        '<div class="map-detail-loc">' + mapEsc(it.address || ((it.region || '') + ' ' + (it.district || ''))) +
+          (approx ? '<span class="map-approx"> · 위치 ' + approx + '</span>' : '') + '</div>' +
+        '<div class="map-price"><span class="lbl">공급금액 (공고문 기재 범위)</span>' +
+          '<span class="val num">' + mapEsc(price) + '</span></div>' +
+        '<dl class="map-facts">' +
+          '<div><dt>공고일</dt><dd class="num">' + mapFmtDate(it.announce) + '</dd></div>' +
+          '<div><dt>청약마감</dt><dd class="num">' + (it.deadline ? mapFmtDate(it.deadline) + ' (' + st.label + ')' : '공고문 참고') + '</dd></div>' +
+          '<div><dt>사업주체</dt><dd>' + mapEsc(it.agencyName || it.agency) + '</dd></div>' +
+          '<div><dt>청약통장</dt><dd>' + (it.minSubMonths ? '가입 ' + it.minSubMonths + '개월 이상' : '공고문 참고') + '</dd></div>' +
+        '</dl>' +
+        (tags ? '<div class="tags">' + tags + '</div>' : '') +
+        (cond ? '<dl class="map-facts">' + cond + '</dl>' : '') +
+        '<div class="map-actions">' + pdf + site + '</div>' +
+        '<p class="map-note">공급금액은 공고문에서 자동 추출한 값이라 주택형별 실제 분양가와 다를 수 있어요. 원문으로 확인하세요.</p>' +
+      '</div>';
+
+    document.getElementById('mapDetailClose').addEventListener('click', function(){
+      document.getElementById('mapDetail').innerHTML = '';
+      if (MV.selected) mapRepaintPin(MV.selected, false);
+      MV.selected = null;
+      Array.prototype.forEach.call(document.querySelectorAll('.map-row'), function(r){ r.classList.remove('on'); });
+    });
+  }
+
+  // 지도 탭 필터 이벤트
+  ['mapSearch','mapRegion','mapSpecial','mapOpenOnly','mapInView'].forEach(function(id){
+    var el = document.getElementById(id);
+    el.addEventListener(el.tagName === 'INPUT' && el.type === 'text' ? 'input' : 'change', function(){
+      if (MV.items.length) mapRefresh();
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.mapCat'), function(c){
+    c.addEventListener('change', function(){ if (MV.items.length) mapRefresh(); });
+  });
+  document.getElementById('mapReset').addEventListener('click', function(){
+    document.getElementById('mapSearch').value = '';
+    document.getElementById('mapRegion').value = '전체';
+    document.getElementById('mapSpecial').value = '전체';
+    document.getElementById('mapOpenOnly').checked = false;
+    document.getElementById('mapInView').checked = true;
+    Array.prototype.forEach.call(document.querySelectorAll('.mapCat'), function(c){ c.checked = true; });
+    if (MV.items.length) mapRefresh();
   });
 
   // ================= 지역 커뮤니티 =================
