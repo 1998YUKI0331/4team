@@ -5,6 +5,7 @@ import FilterBar from './components/FilterBar.vue';
 import NoticeCard from './components/NoticeCard.vue';
 import MatchPanel from './components/MatchPanel.vue';
 import CommunityModal from './components/CommunityModal.vue';
+import CalendarModal from './components/CalendarModal.vue';
 import MapView from './components/MapView.vue';
 import MapNotice from './components/MapNotice.vue';
 import DetailPanel from './components/DetailPanel.vue';
@@ -55,6 +56,15 @@ function gotoNotice(id) {
 function onCardSelect(item) {
   focusOn(item);
   ui.detailTab = 'info';
+}
+
+/** 캘린더 목록에서 공고를 골라 상세로 이동 */
+function openFromCalendar(id) {
+  const item = NOTICE_BY_ID.get(id);
+  if (!item) return;
+  focusOn(item);
+  ui.detailTab = 'info';
+  ui.calendarOpen = false;
 }
 
 // 화면 폭이 바뀌면 열려 있던 커뮤니티를 알맞은 자리로 옮겨 준다.
@@ -167,5 +177,7 @@ onUnmounted(() => {
       @close="ui.communityPopup = false"
       @goto-notice="gotoNotice"
     />
+
+    <CalendarModal v-if="ui.calendarOpen" @close="ui.calendarOpen = false" @goto-notice="openFromCalendar" />
   </div>
 </template>

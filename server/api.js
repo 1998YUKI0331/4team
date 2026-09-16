@@ -11,7 +11,9 @@ import {
   postExists,
   recordVisit,
   saveProfile,
+  scheduleIds,
   toggleLike,
+  toggleSchedule,
   visitCounts,
 } from './db.js';
 import { isKnownNotice } from './notices.js';
@@ -97,6 +99,7 @@ export function createApi(db) {
       visits: visitCounts(db),
       postCounts: postCounts(db),
       profile: getProfile(db, req.uid),
+      schedules: scheduleIds(db, req.uid),
     });
   });
 
@@ -143,6 +146,12 @@ export function createApi(db) {
     if (!isKnownNotice(id)) return res.status(404).json({ error: '없는 공고입니다.' });
     const counted = recordVisit(db, id, req.uid, VISIT_COOLDOWN_MS);
     res.json({ counted, visits: visitCounts(db) });
+  });
+
+  api.post('/api/notices/:id/schedule/toggle', rateLimit('schedule', 120, 60 * 60 * 1000), (req, res) => {
+    const { id } = req.params;
+    if (!isKnownNotice(id)) return res.status(404).json({ error: '없는 공고입니다.' });
+    res.json(toggleSchedule(db, req.uid, id));
   });
 
   api.get('/api/profile', (req, res) => res.json({ profile: getProfile(db, req.uid) }));
