@@ -2761,6 +2761,14 @@ div:has(> .cluster-root) {
   .topbar__tabs button { padding: 6px 10px; font-size: 12px; }
 }
 
+/* 모바일 폭에서는 청약지도만 보여준다 — 탭 전환과 시뮬레이션 진입 버튼을 감춘다 */
+@media (max-width: 960px) {
+  .topbar__tabs,
+  .btn--play {
+    display: none;
+  }
+}
+
 /* ------------------------------------------------------------ 금갱런 (숨겨진 미니게임) */
 
 /* 금갱이를 1.5초 안에 5번 두드리면 열리는 크롬 공룡런 스타일 이스터에그 */

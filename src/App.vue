@@ -77,6 +77,16 @@ function openFromCalendar(id) {
   ui.calendarOpen = false;
 }
 
+// 모바일 폭에서는 청약지도만 보여준다 — 청약 로드(게임) 탭 버튼이 감춰지므로
+// 데스크톱에서 게임을 켜 둔 채 창을 좁히는 경우까지 대비해 지도로 되돌린다.
+watch(
+  compact,
+  (isMobile) => {
+    if (isMobile) ui.view = 'map';
+  },
+  { immediate: true }
+);
+
 // 화면 폭이 바뀌면 열려 있던 커뮤니티를 알맞은 자리로 옮겨 준다.
 watch(roomy, (wide) => {
   if (!selected.value) return;
