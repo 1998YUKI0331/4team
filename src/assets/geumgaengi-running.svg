@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 170" width="560" height="170">
+  <!--
+    금갱런 전용 옆모습 달리기 스프라이트. 4프레임 가로 스트립(140x170 x 4).
+    색상은 docs/character/geumgaengi-guide.jpg 팔레트를 그대로 썼다.
+    (삼성 블루 #0052CC · 로열 블루 #1E3A8A · 스카이 블루 #6EC1FF · 크림 화이트 #F8FAFF · 골드 #F4C542 · 네이비 그레이 #1F2937)
+  -->
+  <!-- 프레임 0 — 오른발(앞) 착지 -->
+  <g transform="translate(0,0)">
+    <g transform="rotate(-35,68,118)"><rect x="60" y="118" width="16" height="55" rx="8" fill="#6EC1FF" /><circle cx="68" cy="173" r="9" fill="#1F2937" /></g>
+    <ellipse cx="70" cy="95" rx="34" ry="40" fill="#0052CC" />
+    <ellipse cx="80" cy="102" rx="20" ry="26" fill="#F8FAFF" />
+    <polygon points="73,100 79,92 85,100" fill="#1E3A8A" />
+    <rect x="73" y="100" width="12" height="10" fill="#1E3A8A" />
+    <g transform="rotate(-25,85,82)"><rect x="78" y="82" width="14" height="42" rx="7" fill="#1E3A8A" /><circle cx="85" cy="124" r="8" fill="#F8FAFF" /></g>
+    <g transform="rotate(35,68,118)"><rect x="60" y="118" width="16" height="55" rx="8" fill="#0052CC" /><circle cx="68" cy="173" r="9" fill="#1F2937" /></g>
+    <circle cx="100" cy="50" r="26" fill="#0052CC" />
+    <circle cx="112" cy="58" r="15" fill="#F8FAFF" />
+    <path d="M85,30 L90,14 L97,26 L103,10 L109,26 L116,14 L121,30 Z" fill="#F4C542" stroke="#E3A700" stroke-width="1" />
+    <circle cx="122" cy="56" r="5" fill="#FFC9D6" />
+    <circle cx="108" cy="44" r="6" fill="#1F2937" />
+    <circle cx="110" cy="42" r="2" fill="#FFFFFF" />
+    <path d="M114,64 Q120,68 126,63" stroke="#1F2937" stroke-width="2" fill="none" stroke-linecap="round" />
+  </g>
+
+  <!-- 프레임 1 — 공중, 다리 모임 -->
+  <g transform="translate(140,-8)">
+    <g transform="rotate(-5,68,118)"><rect x="60" y="118" width="16" height="55" rx="8" fill="#6EC1FF" /><circle cx="68" cy="173" r="9" fill="#1F2937" /></g>
+    <ellipse cx="70" cy="95" rx="34" ry="40" fill="#0052CC" />
+    <ellipse cx="80" cy="102" rx="20" ry="26" fill="#F8FAFF" />
+    <polygon points="73,100 79,92 85,100" fill="#1E3A8A" />
+    <rect x="73" y="100" width="12" height="10" fill="#1E3A8A" />
+    <g transform="rotate(0,85,82)"><rect x="78" y="82" width="14" height="42" rx="7" fill="#1E3A8A" /><circle cx="85" cy="124" r="8" fill="#F8FAFF" /></g>
+    <g transform="rotate(5,68,118)"><rect x="60" y="118" width="16" height="55" rx="8" fill="#0052CC" /><circle cx="68" cy="173" r="9" fill="#1F2937" /></g>
+    <circle cx="100" cy="50" r="26" fill="#0052CC" />
+    <circle cx="112" cy="58" r="15" fill="#F8FAFF" />
+    <path d="M85,30 L90,14 L97,26 L103,10 L109,26 L116,14 L121,30 Z" fill="#F4C542" stroke="#E3A700" stroke-width="1" />
+    <circle cx="122" cy="56" r="5" fill="#FFC9D6" />
+    <circle cx="108" cy="44" r="6" fill="#1F2937" />
+    <circle cx="110" cy="42" r="2" fill="#FFFFFF" />
+    <path d="M114,64 Q120,68 126,63" stroke="#1F2937" stroke-width="2" fill="none" stroke-linecap="round" />
+  </g>
+
+  <!-- 프레임 2 — 왼발(앞) 착지 -->
+  <g transform="translate(280,0)">
+    <g transform="rotate(35,68,118)"><rect x="60" y="118" width="16" height="55" rx="8" fill="#6EC1FF" /><circle cx="68" cy="173" r="9" fill="#1F2937" /></g>
+    <ellipse cx="70" cy="95" rx="34" ry="40" fill="#0052CC" />
+    <ellipse cx="80" cy="102" rx="20" ry="26" fill="#F8FAFF" />
+    <polygon points="73,100 79,92 85,100" fill="#1E3A8A" />
+    <rect x="73" y="100" width="12" height="10" fill="#1E3A8A" />
+    <g transform="rotate(25,85,82)"><rect x="78" y="82" width="14" height="42" rx="7" fill="#1E3A8A" /><circle cx="85" cy="124" r="8" fill="#F8FAFF" /></g>
+    <g transform="rotate(-35,68,118)"><rect x="60" y="118" width="16" height="55" rx="8" fill="#0052CC" /><circle cx="68" cy="173" r="9" fill="#1F2937" /></g>
+    <circle cx="100" cy="50" r="26" fill="#0052CC" />
+    <circle cx="112" cy="58" r="15" fill="#F8FAFF" />
+    <path d="M85,30 L90,14 L97,26 L103,10 L109,26 L116,14 L121,30 Z" fill="#F4C542" stroke="#E3A700" stroke-width="1" />
+    <circle cx="122" cy="56" r="5" fill="#FFC9D6" />
+    <circle cx="108" cy="44" r="6" fill="#1F2937" />
+    <circle cx="110" cy="42" r="2" fill="#FFFFFF" />
+    <path d="M114,64 Q120,68 126,63" stroke="#1F2937" stroke-width="2" fill="none" stroke-linecap="round" />
+  </g>
+
+  <!-- 프레임 3 — 공중, 다리 모임(반대) -->
+  <g transform="translate(420,-8)">
+    <g transform="rotate(5,68,118)"><rect x="60" y="118" width="16" height="55" rx="8" fill="#6EC1FF" /><circle cx="68" cy="173" r="9" fill="#1F2937" /></g>
+    <ellipse cx="70" cy="95" rx="34" ry="40" fill="#0052CC" />
+    <ellipse cx="80" cy="102" rx="20" ry="26" fill="#F8FAFF" />
+    <polygon points="73,100 79,92 85,100" fill="#1E3A8A" />
+    <rect x="73" y="100" width="12" height="10" fill="#1E3A8A" />
+    <g transform="rotate(0,85,82)"><rect x="78" y="82" width="14" height="42" rx="7" fill="#1E3A8A" /><circle cx="85" cy="124" r="8" fill="#F8FAFF" /></g>
+    <g transform="rotate(-5,68,118)"><rect x="60" y="118" width="16" height="55" rx="8" fill="#0052CC" /><circle cx="68" cy="173" r="9" fill="#1F2937" /></g>
+    <circle cx="100" cy="50" r="26" fill="#0052CC" />
+    <circle cx="112" cy="58" r="15" fill="#F8FAFF" />
+    <path d="M85,30 L90,14 L97,26 L103,10 L109,26 L116,14 L121,30 Z" fill="#F4C542" stroke="#E3A700" stroke-width="1" />
+    <circle cx="122" cy="56" r="5" fill="#FFC9D6" />
+    <circle cx="108" cy="44" r="6" fill="#1F2937" />
+    <circle cx="110" cy="42" r="2" fill="#FFFFFF" />
+    <path d="M114,64 Q120,68 126,63" stroke="#1F2937" stroke-width="2" fill="none" stroke-linecap="round" />
+  </g>
+</svg>

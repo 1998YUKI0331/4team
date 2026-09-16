@@ -19,9 +19,9 @@ const JUMP_VELOCITY = -0.62;
 const PLAYER_X = 46;
 const PLAYER_W = 46;
 const PLAYER_H = 56;
-const FRAME_W = 208;
-const FRAME_H = 260;
-const FRAME_COUNT = 8;
+const FRAME_W = 140;
+const FRAME_H = 170;
+const FRAME_COUNT = 4;
 
 const player = { y: GROUND_Y - PLAYER_H, vy: 0, jumping: false };
 let obstacles = [];
@@ -34,8 +34,9 @@ let ctx;
 let raf = 0;
 let lastTime = 0;
 
+/** 게임 전용 옆모습 달리기 스프라이트(4프레임) — 평소 정면 타자 스프라이트와는 별개다. */
 const sprite = new Image();
-sprite.src = new URL('../assets/geumgaengi-typing.webp', import.meta.url).href;
+sprite.src = new URL('../assets/geumgaengi-running.svg', import.meta.url).href;
 
 function reset() {
   player.y = GROUND_Y - PLAYER_H;
@@ -144,7 +145,7 @@ function draw() {
     ctx.fillRect(o.x, GROUND_Y - o.h, o.w, o.h);
   });
 
-  const frame = Math.floor(elapsed / 90) % FRAME_COUNT;
+  const frame = Math.floor(elapsed / 110) % FRAME_COUNT;
   if (sprite.complete && sprite.naturalWidth) {
     ctx.drawImage(sprite, frame * FRAME_W, 0, FRAME_W, FRAME_H, PLAYER_X, player.y, PLAYER_W, PLAYER_H);
   } else {
