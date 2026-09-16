@@ -1,14 +1,16 @@
 <script setup>
-import { onMounted, onUnmounted, watch } from 'vue';
+import { defineAsyncComponent, onMounted, onUnmounted, watch } from 'vue';
 import TopBar from './components/TopBar.vue';
 import FilterBar from './components/FilterBar.vue';
 import NoticeCard from './components/NoticeCard.vue';
 import MatchPanel from './components/MatchPanel.vue';
 import CommunityModal from './components/CommunityModal.vue';
+import CalendarModal from './components/CalendarModal.vue';
 import MapView from './components/MapView.vue';
 import MapNotice from './components/MapNotice.vue';
 import DetailPanel from './components/DetailPanel.vue';
 import BuddyMascot from './components/BuddyMascot.vue';
+import GeumgaengRun from './components/GeumgaengRun.vue';
 import { useMediaQuery } from './composables/useMediaQuery';
 import { NOTICE_BY_ID, NOTICES } from './lib/notices';
 import {
@@ -23,7 +25,16 @@ import {
   ui,
 } from './stores/app';
 import { serverState } from './stores/server';
-import { installBuddyClickDelay } from './stores/buddy';
+import { buddyState, closeGeumgaengRun, installBuddyClickDelay } from './stores/buddy';
+
+/**
+ * 청약 로드(3D 게임)는 Three.js 를 끌고 들어와 500KB 가 넘는다.
+ * 지도만 쓰는 사용자가 그 값을 치르지 않도록 게임 탭을 처음 열 때만 받아 온다.
+ */
+const GameView = defineAsyncComponent({
+  loader: () => import('./components/GameView.vue'),
+  delay: 120,
+});
 
 /**
  * 커뮤니티를 상세 패널 "탭" 으로 넣을지, 화면 위에 "레이어 팝업" 으로 띄울지의 기준.
@@ -55,6 +66,15 @@ function gotoNotice(id) {
 function onCardSelect(item) {
   focusOn(item);
   ui.detailTab = 'info';
+}
+
+/** 캘린더 목록에서 공고를 골라 상세로 이동 */
+function openFromCalendar(id) {
+  const item = NOTICE_BY_ID.get(id);
+  if (!item) return;
+  focusOn(item);
+  ui.detailTab = 'info';
+  ui.calendarOpen = false;
 }
 
 // 화면 폭이 바뀌면 열려 있던 커뮤니티를 알맞은 자리로 옮겨 준다.
@@ -99,7 +119,9 @@ onUnmounted(() => {
       <button type="button" @click="initApp">다시 시도</button>
     </p>
 
-    <div class="app__body">
+    <GameView v-if="ui.view === 'game'" />
+
+    <div v-show="ui.view === 'map'" class="app__body">
       <section class="sidebar" :class="{ 'is-open': ui.sheetOpen }">
         <button
           type="button"
@@ -156,16 +178,21 @@ onUnmounted(() => {
       </main>
     </div>
 
+    <!-- 금갱이는 두 탭에 모두 상주한다. 다만 비켜서기·숨기기는 지도 화면의 사정이다. -->
     <BuddyMascot
-      :shifted="roomy && !!selected && !ui.communityPopup"
-      :tucked="compact && (!!selected || ui.sheetOpen)"
+      :shifted="ui.view === 'map' && roomy && !!selected && !ui.communityPopup"
+      :tucked="ui.view === 'map' && compact && (!!selected || ui.sheetOpen)"
     />
 
     <CommunityModal
-      v-if="selected && ui.communityPopup"
+      v-if="ui.view === 'map' && selected && ui.communityPopup"
       :notice="selected"
       @close="ui.communityPopup = false"
       @goto-notice="gotoNotice"
     />
+
+    <CalendarModal v-if="ui.calendarOpen" @close="ui.calendarOpen = false" @goto-notice="openFromCalendar" />
+
+    <GeumgaengRun v-if="buddyState.gameOpen" @close="closeGeumgaengRun" />
   </div>
 </template>

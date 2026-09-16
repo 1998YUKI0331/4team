@@ -1,0 +1,294 @@
+/*
+ * 청약 로드 게임 스타일 — 전부 .game-root 아래로 스코프되어 있다.
+ * 지도 앱과 --bg / --line / --shadow 변수 이름이 겹치므로 :root 에 두면 안 된다.
+ * .btn/.badge/.chip/.unit 은 지도 앱과 이름이 겹쳐 cr- 접두어로 옮겼다.
+ */
+
+/* ═══════════════════════════ 기본 ═══════════════════════════ */
+.game-root {
+  --bg: #05070f;
+  --ink: #e9f0ff;
+  --ink-dim: #93a4c6;
+  --ink-faint: #61729a;
+  --line: rgba(120, 160, 255, 0.14);
+  --line-strong: rgba(140, 180, 255, 0.28);
+  --panel: rgba(9, 13, 26, 0.74);
+  --panel-solid: #0b1020;
+  --gold: #ffc76b;
+  --cyan: #4de2ff;
+  --green: #33e39f;
+  --red: #ff6b8a;
+  --violet: #7c5cff;
+  --orange: #ff9f68;
+
+  --r-lg: 18px;
+  --r-md: 13px;
+  --r-sm: 9px;
+
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.55);
+  color-scheme: dark;
+}.game-root, .game-root * { box-sizing: border-box; }.game-root /*
+ * hidden 속성이 확실히 먹게 한다.
+ * UA 스타일시트의 [hidden] {display:none} 은 작성자 스타일이면 특이도와 무관하게 진다.
+ * #overlay{display:grid}, .panel{display:flex} 같은 규칙이 이미 있어서
+ * show(node,false) 를 해도 요소가 그대로 남아 있었다 — 특히 #overlay 는
+ * backdrop-filter:blur(10px) 를 단 전체 화면 레이어라, 모달을 닫은 뒤에도
+ * 화면 전체가 흐려지고 클릭이 전부 오버레이에 먹혔다.
+ */
+[hidden] { display: none !important; }.game-root, .game-root {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', 'Noto Sans KR', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}.game-root { user-select: none; }/* dropped: #app — 컨테이너가 대신함 */
+.game-root #stage { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }.game-root #vignette {
+  position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background:
+    radial-gradient(130% 90% at 50% 8%, transparent 35%, rgba(2, 4, 10, 0.55) 100%),
+    linear-gradient(180deg, rgba(4, 7, 16, 0.6) 0%, transparent 18%, transparent 74%, rgba(4, 7, 16, 0.78) 100%);
+}.game-root .glass {
+  background: var(--panel);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}.game-root .num { font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; }.game-root ::-webkit-scrollbar { width: 9px; height: 9px; }.game-root ::-webkit-scrollbar-track { background: transparent; }.game-root ::-webkit-scrollbar-thumb { background: rgba(120, 160, 255, 0.2); border-radius: 6px; }.game-root ::-webkit-scrollbar-thumb:hover { background: rgba(120, 160, 255, 0.35); }.game-root button { font: inherit; color: inherit; cursor: pointer; border: none; background: none; }.game-root button:disabled { cursor: not-allowed; }
+/* ═══════════════════════════ 상단 HUD ═══════════════════════════ */
+.game-root #hud {
+  position: absolute; z-index: 20;
+  top: 14px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: stretch; gap: 2px;
+  padding: 7px; border-radius: 999px;
+  max-width: calc(100vw - 28px);
+}.game-root .hud-date {
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 4px 18px 4px 14px; min-width: 132px;
+}.game-root .hud-date b { font-size: 16px; letter-spacing: -0.2px; }.game-root .hud-date span { font-size: 11px; color: var(--ink-faint); }.game-root .cr-chip {
+  display: flex; align-items: center; gap: 9px;
+  padding: 6px 15px; border-radius: 999px;
+  border-left: 1px solid var(--line);
+  white-space: nowrap;
+}.game-root .chip-ico { font-size: 15px; opacity: 0.9; line-height: 1; }.game-root .chip-body { display: flex; flex-direction: column; }.game-root .chip-label { font-size: 10px; color: var(--ink-faint); letter-spacing: 0.3px; }.game-root .chip-val { font-size: 14px; font-weight: 700; letter-spacing: -0.2px; }.game-root .chip-val.up { color: var(--green); }.game-root .chip-val.down { color: var(--red); }.game-root .chip-sub { font-size: 10px; color: var(--ink-faint); margin-left: 4px; font-weight: 500; }.game-root .hud-actions { display: flex; align-items: center; gap: 4px; padding-left: 8px; border-left: 1px solid var(--line); }.game-root .icon-btn {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 14px;
+  background: rgba(255, 255, 255, 0.04); transition: background 0.15s, transform 0.15s;
+}.game-root .icon-btn:hover { background: rgba(120, 160, 255, 0.18); transform: translateY(-1px); }
+/* ═══════════════════════════ 패널 공통 ═══════════════════════════ */
+.game-root .panel {
+  position: absolute; z-index: 15;
+  border-radius: var(--r-lg);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}.game-root .panel-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 16px 11px;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}.game-root .panel-title { font-size: 12px; font-weight: 700; letter-spacing: 0.6px; color: var(--ink-dim); text-transform: uppercase; }.game-root .panel-body { overflow-y: auto; overflow-x: hidden; padding: 12px 14px 16px; flex: 1; }.game-root #status {
+  left: 16px; top: 76px; width: 322px; max-height: calc(100vh - 190px);
+}.game-root #board {
+  right: 16px; top: 76px; width: 412px; max-height: calc(100vh - 190px);
+  background: var(--panel);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+/* ═══════════════════════════ 상태 패널 ═══════════════════════════ */
+.game-root .score-ring {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px; margin-bottom: 12px;
+  background: linear-gradient(135deg, rgba(255, 199, 107, 0.11), rgba(124, 92, 255, 0.07));
+  border: 1px solid rgba(255, 199, 107, 0.22);
+  border-radius: var(--r-md);
+}.game-root .score-ring svg { flex-shrink: 0; }.game-root .score-main { display: flex; flex-direction: column; gap: 1px; }.game-root .score-main b { font-size: 26px; line-height: 1.05; letter-spacing: -0.8px; }.game-root .score-main b small { font-size: 13px; color: var(--ink-faint); font-weight: 600; }.game-root .score-main span { font-size: 11px; color: var(--ink-dim); }.game-root .score-next { font-size: 11px; color: var(--gold); margin-top: 3px; }.game-root .bars { display: flex; flex-direction: column; gap: 9px; margin-bottom: 14px; }.game-root .bar-row { display: flex; flex-direction: column; gap: 4px; }.game-root .bar-top { display: flex; justify-content: space-between; align-items: baseline; font-size: 11.5px; }.game-root .bar-top .lbl { color: var(--ink-dim); }.game-root .bar-top .val { font-weight: 700; }.game-root .bar-top .val em { font-style: normal; color: var(--ink-faint); font-weight: 500; font-size: 10.5px; }.game-root .bar-track { height: 5px; border-radius: 3px; background: rgba(255, 255, 255, 0.07); overflow: hidden; }.game-root .bar-fill { height: 100%; border-radius: 3px; transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1); }.game-root .bar-hint { font-size: 10px; color: var(--ink-faint); }.game-root .sec-title {
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.7px; color: var(--ink-faint);
+  text-transform: uppercase; margin: 16px 0 8px; display: flex; align-items: center; gap: 7px;
+}.game-root .sec-title::after { content: ''; flex: 1; height: 1px; background: var(--line); }.game-root .kv { display: flex; justify-content: space-between; align-items: baseline; padding: 4px 0; font-size: 12.5px; }.game-root .kv .k { color: var(--ink-dim); }.game-root .kv .v { font-weight: 600; }.game-root .kv .v.pos { color: var(--green); }.game-root .kv .v.neg { color: var(--red); }.game-root .kv .v.warn { color: var(--gold); }.game-root .kv + .kv { border-top: 1px dashed rgba(120, 160, 255, 0.08); }.game-root .kv .v { display: inline-flex; align-items: center; gap: 6px; }.game-root .mini-btn {
+  font: inherit; font-size: 10.5px; font-weight: 700; line-height: 1;
+  padding: 4px 8px; border-radius: 999px; white-space: nowrap;
+  background: rgba(255, 199, 107, 0.14); color: var(--gold);
+  border: 1px solid rgba(255, 199, 107, 0.3); transition: all 0.15s;
+}.game-root .mini-btn:hover { background: rgba(255, 199, 107, 0.26); transform: translateY(-1px); }.game-root .tagrow { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }.game-root .tag {
+  font-size: 10.5px; padding: 3px 8px; border-radius: 999px;
+  background: rgba(120, 160, 255, 0.11); border: 1px solid var(--line);
+  color: var(--ink-dim); white-space: nowrap;
+}.game-root .tag.on { background: rgba(51, 227, 159, 0.14); border-color: rgba(51, 227, 159, 0.34); color: var(--green); }.game-root .tag.off { opacity: 0.45; }.game-root .tag.warn { background: rgba(255, 199, 107, 0.14); border-color: rgba(255, 199, 107, 0.34); color: var(--gold); }.game-root .tag.bad { background: rgba(255, 107, 138, 0.14); border-color: rgba(255, 107, 138, 0.34); color: var(--red); }.game-root .deposit-picker { display: flex; gap: 4px; margin-top: 7px; }.game-root .deposit-picker button {
+  flex: 1; padding: 6px 0; font-size: 11px; font-weight: 600;
+  border-radius: var(--r-sm); background: rgba(255, 255, 255, 0.05);
+  border: 1px solid transparent; transition: all 0.14s; color: var(--ink-dim);
+}.game-root .deposit-picker button:hover { background: rgba(120, 160, 255, 0.16); color: var(--ink); }.game-root .deposit-picker button.on { background: rgba(77, 226, 255, 0.16); border-color: rgba(77, 226, 255, 0.4); color: var(--cyan); }
+/* 진행 중 계약 */
+.game-root .contract-card {
+  margin-top: 12px; padding: 12px; border-radius: var(--r-md);
+  background: linear-gradient(135deg, rgba(51, 227, 159, 0.1), rgba(77, 226, 255, 0.05));
+  border: 1px solid rgba(51, 227, 159, 0.28);
+}.game-root .contract-card h4 { margin: 0 0 3px; font-size: 13px; letter-spacing: -0.2px; }.game-root .contract-card .sub { font-size: 11px; color: var(--ink-dim); margin-bottom: 9px; }.game-root .sched { display: flex; gap: 3px; margin-bottom: 7px; }.game-root .sched-dot {
+  flex: 1; height: 5px; border-radius: 2px; background: rgba(255, 255, 255, 0.12);
+}.game-root .sched-dot.paid { background: var(--green); }.game-root .sched-dot.next { background: var(--gold); animation: pulse 1.6s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+/* 로그 */
+.game-root .logs { display: flex; flex-direction: column; gap: 5px; }.game-root .log {
+  display: flex; gap: 8px; padding: 6px 8px; border-radius: var(--r-sm);
+  background: rgba(255, 255, 255, 0.025); font-size: 11.5px; line-height: 1.4;
+}.game-root .log .lt { color: var(--ink-faint); flex-shrink: 0; font-size: 10.5px; padding-top: 1px; }.game-root .log .lb b { display: block; font-weight: 600; }.game-root .log .lb span { color: var(--ink-faint); font-size: 10.5px; }.game-root .log.win { background: rgba(51, 227, 159, 0.1); }.game-root .log.lose { background: rgba(255, 107, 138, 0.08); }.game-root .log.forfeit { background: rgba(255, 107, 138, 0.14); }.game-root .log.movein, .game-root .log.contract { background: rgba(255, 199, 107, 0.1); }
+/* ═══════════════════════════ 공고 패널 ═══════════════════════════ */
+.game-root .board-tabs { display: flex; gap: 4px; padding: 10px 12px 0; }.game-root .board-tabs button {
+  flex: 1; padding: 7px 0; font-size: 12px; font-weight: 600; border-radius: var(--r-sm) var(--r-sm) 0 0;
+  color: var(--ink-faint); border-bottom: 2px solid transparent; transition: all 0.15s;
+}.game-root .board-tabs button:hover { color: var(--ink-dim); }.game-root .board-tabs button.on { color: var(--gold); border-bottom-color: var(--gold); background: rgba(255, 199, 107, 0.07); }.game-root .board-tabs .count {
+  display: inline-block; margin-left: 5px; padding: 0 5px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1); font-size: 10px; font-weight: 700;
+}.game-root .notice-list { display: flex; flex-direction: column; gap: 8px; }.game-root .notice {
+  padding: 11px 12px; border-radius: var(--r-md); cursor: pointer;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid transparent;
+  transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1), background 0.16s, border-color 0.16s;
+  position: relative; overflow: hidden;
+}.game-root .notice::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--ink-faint); opacity: 0.5;
+}.game-root .notice.ok::before { background: var(--gold); opacity: 1; }.game-root .notice.rent::before { background: var(--cyan); opacity: 1; }.game-root .notice:hover { background: rgba(120, 160, 255, 0.1); transform: translateX(3px); border-color: var(--line-strong); }.game-root .notice.sel { background: rgba(255, 199, 107, 0.11); border-color: rgba(255, 199, 107, 0.36); }.game-root .notice.dim { opacity: 0.52; }.game-root .notice-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }.game-root .notice-title { font-size: 13.5px; font-weight: 700; letter-spacing: -0.3px; line-height: 1.3; }.game-root .notice-meta { font-size: 11px; color: var(--ink-faint); margin-top: 3px; display: flex; gap: 6px; flex-wrap: wrap; }.game-root .notice-meta .dot::before { content: '·'; margin-right: 6px; }.game-root .notice-price { font-size: 12.5px; font-weight: 700; color: var(--gold); white-space: nowrap; }.game-root .notice-price small { display: block; font-size: 10px; color: var(--ink-faint); font-weight: 500; text-align: right; }.game-root .cr-badge {
+  font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 999px; white-space: nowrap;
+}.game-root .cr-badge.ok { background: rgba(51, 227, 159, 0.16); color: var(--green); }.game-root .cr-badge.no { background: rgba(255, 255, 255, 0.07); color: var(--ink-faint); }.game-root .cr-badge.hot { background: rgba(255, 107, 138, 0.16); color: var(--red); }.game-root .cr-badge.new { background: rgba(255, 199, 107, 0.18); color: var(--gold); }.game-root .cr-badge.rent { background: rgba(77, 226, 255, 0.14); color: var(--cyan); }.game-root .cr-badge.lh { background: rgba(124, 92, 255, 0.16); color: #b3a4ff; }.game-root .empty { text-align: center; padding: 34px 16px; color: var(--ink-faint); font-size: 12.5px; line-height: 1.7; }.game-root .empty .big { font-size: 30px; display: block; margin-bottom: 10px; opacity: 0.6; }
+/* 공고 상세 */
+.game-root .detail-head { padding: 14px 16px; border-bottom: 1px solid var(--line); }.game-root .detail-head .back { font-size: 11.5px; color: var(--ink-faint); margin-bottom: 7px; display: inline-flex; gap: 5px; align-items: center; }.game-root .detail-head .back:hover { color: var(--cyan); }.game-root .detail-head h3 { margin: 0; font-size: 17px; letter-spacing: -0.5px; line-height: 1.25; }.game-root .detail-head .sub { font-size: 11.5px; color: var(--ink-dim); margin-top: 5px; display: flex; gap: 7px; flex-wrap: wrap; align-items: center; }.game-root .units { display: flex; gap: 6px; margin-bottom: 4px; flex-wrap: wrap; }.game-root .cr-unit {
+  flex: 1 1 78px; padding: 9px 8px; border-radius: var(--r-sm); text-align: center;
+  background: rgba(255, 255, 255, 0.04); border: 1px solid transparent; transition: all 0.15s;
+}.game-root .cr-unit:hover { background: rgba(120, 160, 255, 0.13); }.game-root .cr-unit.on { background: rgba(255, 199, 107, 0.15); border-color: rgba(255, 199, 107, 0.42); }.game-root .cr-unit b { display: block; font-size: 12.5px; }.game-root .cr-unit span { display: block; font-size: 11px; color: var(--gold); font-weight: 700; margin-top: 2px; }.game-root .cr-unit em { display: block; font-size: 10px; color: var(--ink-faint); font-style: normal; }.game-root .supply {
+  border-radius: var(--r-md); margin-bottom: 7px; overflow: hidden;
+  border: 1px solid var(--line); background: rgba(255, 255, 255, 0.025);
+}.game-root .supply.ok { border-color: rgba(51, 227, 159, 0.3); background: rgba(51, 227, 159, 0.055); }.game-root .supply-head {
+  display: flex; align-items: center; gap: 9px; padding: 9px 11px; width: 100%; text-align: left;
+}.game-root .supply-head:hover { background: rgba(255, 255, 255, 0.04); }.game-root .supply-ico { font-size: 16px; }.game-root .supply-name { font-size: 13px; font-weight: 700; flex: 1; }.game-root .supply-name em { font-style: normal; font-size: 10.5px; color: var(--ink-faint); font-weight: 500; margin-left: 5px; }.game-root .supply-odds { text-align: right; }.game-root .supply-odds b { font-size: 13px; }.game-root .supply-odds span { display: block; font-size: 10px; color: var(--ink-faint); }.game-root .supply-body { padding: 0 11px 10px; }.game-root .check { display: flex; gap: 7px; padding: 3px 0; font-size: 11.5px; align-items: flex-start; }.game-root .check .mark { flex-shrink: 0; width: 13px; text-align: center; font-size: 11px; }.game-root .check.ok .mark { color: var(--green); }.game-root .check.no .mark { color: var(--red); }.game-root .check .lbl { color: var(--ink-dim); min-width: 62px; flex-shrink: 0; }.game-root .check .det { color: var(--ink-faint); }.game-root .check.no .det { color: var(--red); }.game-root .odds-bar { height: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.08); overflow: hidden; margin: 8px 0 6px; }.game-root .odds-bar i { display: block; height: 100%; border-radius: 3px; }.game-root .money-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 4px; }.game-root .money-cell { padding: 8px 10px; border-radius: var(--r-sm); background: rgba(255, 255, 255, 0.04); }.game-root .money-cell .k { font-size: 10.5px; color: var(--ink-faint); }.game-root .money-cell .v { font-size: 13px; font-weight: 700; letter-spacing: -0.3px; }.game-root .money-cell.danger { background: rgba(255, 107, 138, 0.12); }.game-root .money-cell.danger .v { color: var(--red); }.game-root .money-cell.good { background: rgba(51, 227, 159, 0.1); }.game-root .money-cell.good .v { color: var(--green); }.game-root .warn-list { margin-top: 8px; display: flex; flex-direction: column; gap: 5px; }.game-root .warn-item {
+  display: flex; gap: 7px; font-size: 11.5px; padding: 7px 9px; border-radius: var(--r-sm); line-height: 1.45;
+}.game-root .warn-item.fatal { background: rgba(255, 107, 138, 0.13); color: #ffc0cd; }.game-root .warn-item.warn { background: rgba(255, 199, 107, 0.12); color: #ffe2b4; }.game-root .verdict {
+  display: flex; align-items: center; gap: 9px; padding: 10px 12px; border-radius: var(--r-md);
+  margin-top: 10px; font-size: 12.5px; font-weight: 600;
+}.game-root .verdict.safe { background: rgba(51, 227, 159, 0.13); color: var(--green); }.game-root .verdict.caution { background: rgba(255, 199, 107, 0.13); color: var(--gold); }.game-root .verdict.danger { background: rgba(255, 107, 138, 0.14); color: var(--red); }.game-root .verdict .big { font-size: 18px; }
+/* ═══════════════════════════ 하단 도크 ═══════════════════════════ */
+.game-root #dock {
+  position: absolute; z-index: 20; bottom: 18px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 9px;
+  /* left:50% 로 놓인 shrink-to-fit 요소는 가용 폭이 50vw 로 잘린다.
+     그대로 두면 행동 버튼 5개에 밀려 '다음 달로' 가 세로로 찌그러진다. */
+  width: max-content; max-width: calc(100vw - 32px);
+}.game-root .actions {
+  display: flex; gap: 5px; padding: 7px; border-radius: var(--r-lg);
+  background: var(--panel); backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid var(--line); box-shadow: var(--shadow);
+}.game-root .act {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 8px 14px; border-radius: var(--r-md); min-width: 78px;
+  border: 1px solid transparent; transition: all 0.16s cubic-bezier(0.22, 1, 0.36, 1);
+}.game-root .act:hover:not(:disabled) { background: rgba(120, 160, 255, 0.14); transform: translateY(-2px); }.game-root .act.on { background: rgba(255, 199, 107, 0.16); border-color: rgba(255, 199, 107, 0.4); }.game-root .act:disabled { opacity: 0.35; }.game-root .act .ico { font-size: 18px; line-height: 1.1; }.game-root .act .lbl { font-size: 11px; font-weight: 600; }.game-root .act .hint { font-size: 9.5px; color: var(--ink-faint); }.game-root .next-btn {
+  display: flex; align-items: center; gap: 11px;
+  flex-shrink: 0; white-space: nowrap;
+  padding: 14px 24px; border-radius: var(--r-lg); font-weight: 800; font-size: 15px;
+  background: linear-gradient(135deg, var(--gold), #ff9f68);
+  color: #211505; box-shadow: 0 10px 34px rgba(255, 159, 104, 0.34);
+  transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.16s, filter 0.16s;
+  letter-spacing: -0.3px;
+}.game-root .next-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 16px 42px rgba(255, 159, 104, 0.46); }.game-root .next-btn:active:not(:disabled) { transform: translateY(0); }.game-root .next-btn:disabled { filter: grayscale(0.6) brightness(0.7); }.game-root .next-btn kbd {
+  font: inherit; font-size: 10px; padding: 2px 6px; border-radius: 5px;
+  background: rgba(0, 0, 0, 0.18); font-weight: 700;
+}
+/* ═══════════════════════════ 툴팁 ═══════════════════════════ */
+.game-root #tip {
+  position: absolute; z-index: 30; pointer-events: none;
+  padding: 8px 12px; border-radius: var(--r-md); font-size: 12px;
+  background: rgba(6, 10, 20, 0.93); border: 1px solid var(--line-strong);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5); max-width: 260px;
+  transform: translate(-50%, calc(-100% - 14px));
+}.game-root #tip b { display: block; font-size: 13px; margin-bottom: 2px; }.game-root #tip span { color: var(--ink-dim); font-size: 11px; }.game-root #tip .hot { color: var(--gold); }
+/* ═══════════════════════════ 시네마 자막 ═══════════════════════════ */
+.game-root #cinema { position: absolute; inset: 0; z-index: 40; pointer-events: none; }.game-root .cinema-bar {
+  position: absolute; left: 0; right: 0; height: 11vh; background: #000;
+  animation: barin 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}.game-root .cinema-bar.top { top: 0; }.game-root .cinema-bar.bottom { bottom: 0; }
+@keyframes barin { from { transform: scaleY(0); } to { transform: scaleY(1); } }.game-root .cinema-bar.top { transform-origin: top; }.game-root .cinema-bar.bottom { transform-origin: bottom; }.game-root #cinema-text {
+  position: absolute; left: 50%; bottom: 15vh; transform: translateX(-50%);
+  text-align: center; font-size: 22px; font-weight: 800; letter-spacing: -0.6px;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.9);
+  padding: 0 24px; max-width: 76vw;
+}.game-root #cinema-text small { display: block; font-size: 13px; font-weight: 500; color: var(--ink-dim); margin-top: 7px; letter-spacing: 0; }.game-root #cinema-text .flash { animation: flashin 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes flashin { from { opacity: 0; transform: translateY(14px) scale(0.96); } to { opacity: 1; transform: none; } }.game-root #cinema-skip {
+  position: absolute; right: 24px; bottom: calc(11vh + 18px); pointer-events: auto;
+  font-size: 12px; color: var(--ink-faint); padding: 7px 14px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07); transition: all 0.15s;
+}.game-root #cinema-skip:hover { background: rgba(255, 255, 255, 0.15); color: var(--ink); }
+/* ═══════════════════════════ 모달 ═══════════════════════════ */
+.game-root #overlay {
+  position: absolute; inset: 0; z-index: 50;
+  display: grid; place-items: center; padding: 22px;
+  background: rgba(3, 5, 12, 0.72);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  animation: fadein 0.26s ease both;
+}
+@keyframes fadein { from { opacity: 0; } to { opacity: 1; } }.game-root .modal {
+  width: min(680px, 100%); max-height: calc(100vh - 44px);
+  background: var(--panel-solid);
+  border: 1px solid var(--line-strong); border-radius: 22px;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.75);
+  display: flex; flex-direction: column; overflow: hidden;
+  animation: modalin 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes modalin { from { opacity: 0; transform: translateY(24px) scale(0.965); } to { opacity: 1; transform: none; } }.game-root .modal.wide { width: min(940px, 100%); }.game-root .modal-head { padding: 22px 26px 16px; border-bottom: 1px solid var(--line); }.game-root .modal-head .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }.game-root .modal-head h2 { margin: 0; font-size: 24px; letter-spacing: -0.8px; line-height: 1.2; }.game-root .modal-head p { margin: 8px 0 0; color: var(--ink-dim); font-size: 13.5px; line-height: 1.6; }.game-root .modal-body { padding: 20px 26px; overflow-y: auto; flex: 1; }.game-root .modal-foot { padding: 16px 26px 22px; display: flex; gap: 9px; justify-content: flex-end; border-top: 1px solid var(--line); flex-wrap: wrap; }.game-root .cr-btn {
+  padding: 11px 20px; border-radius: var(--r-md); font-weight: 700; font-size: 13.5px;
+  background: rgba(255, 255, 255, 0.07); border: 1px solid var(--line);
+  transition: all 0.15s cubic-bezier(0.22, 1, 0.36, 1);
+}.game-root .cr-btn:hover:not(:disabled) { background: rgba(120, 160, 255, 0.18); transform: translateY(-1px); }.game-root .cr-btn.primary { background: linear-gradient(135deg, var(--gold), #ff9f68); color: #211505; border-color: transparent; }.game-root .cr-btn.primary:hover { box-shadow: 0 10px 28px rgba(255, 159, 104, 0.4); }.game-root .cr-btn.danger { background: rgba(255, 107, 138, 0.16); color: var(--red); border-color: rgba(255, 107, 138, 0.3); }.game-root .cr-btn.ghost { background: transparent; color: var(--ink-dim); }.game-root .cr-btn:disabled { opacity: 0.4; }
+/* 선택지 */
+.game-root .choices { display: flex; flex-direction: column; gap: 9px; }.game-root .choice {
+  display: flex; align-items: center; gap: 13px; width: 100%; text-align: left;
+  padding: 14px 16px; border-radius: var(--r-md);
+  background: rgba(255, 255, 255, 0.045); border: 1px solid var(--line);
+  transition: all 0.16s cubic-bezier(0.22, 1, 0.36, 1);
+}.game-root .choice:hover { background: rgba(120, 160, 255, 0.14); border-color: var(--line-strong); transform: translateX(4px); }.game-root .choice.danger:hover { background: rgba(255, 107, 138, 0.14); border-color: rgba(255, 107, 138, 0.35); }.game-root .choice .n {
+  width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center;
+  background: rgba(255, 199, 107, 0.15); color: var(--gold); font-size: 12px; font-weight: 800; flex-shrink: 0;
+}.game-root .choice .txt b { display: block; font-size: 14px; letter-spacing: -0.2px; }.game-root .choice .txt span { font-size: 11.5px; color: var(--ink-faint); }
+/* 프리셋 카드 */
+.game-root .presets { display: grid; grid-template-columns: repeat(auto-fit, minmax(198px, 1fr)); gap: 11px; }.game-root .preset {
+  padding: 16px; border-radius: var(--r-md); text-align: left;
+  background: rgba(255, 255, 255, 0.04); border: 1.5px solid var(--line);
+  transition: all 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}.game-root .preset:hover { background: rgba(120, 160, 255, 0.11); transform: translateY(-3px); border-color: var(--line-strong); }.game-root .preset.on { border-color: var(--gold); background: rgba(255, 199, 107, 0.11); }.game-root .preset .emoji { font-size: 30px; display: block; margin-bottom: 8px; }.game-root .preset h4 { margin: 0 0 2px; font-size: 15.5px; letter-spacing: -0.3px; }.game-root .preset .tagline { font-size: 11.5px; color: var(--gold); margin-bottom: 8px; }.game-root .preset .desc { font-size: 11.5px; color: var(--ink-dim); line-height: 1.55; }.game-root .preset .stats { margin-top: 10px; display: flex; flex-direction: column; gap: 2px; }.game-root .preset .stats div { display: flex; justify-content: space-between; font-size: 11px; }.game-root .preset .stats .k { color: var(--ink-faint); }.game-root .preset .diff { position: absolute; }
+/* 결과 */
+.game-root .result-hero { text-align: center; padding: 8px 0 18px; }.game-root .result-hero .rank {
+  font-size: 76px; font-weight: 900; line-height: 1; letter-spacing: -4px;
+  background: linear-gradient(135deg, var(--gold), #ff6b8a, var(--violet));
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  animation: rankin 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes rankin { from { opacity: 0; transform: scale(0.5) rotate(-8deg); } to { opacity: 1; transform: none; } }.game-root .result-hero h2 { margin: 6px 0 0; font-size: 26px; letter-spacing: -0.8px; }.game-root .result-hero p { margin: 10px auto 0; max-width: 460px; color: var(--ink-dim); font-size: 13.5px; line-height: 1.7; }.game-root .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin-top: 16px; }.game-root .stat {
+  padding: 13px; border-radius: var(--r-md); text-align: center;
+  background: rgba(255, 255, 255, 0.04); border: 1px solid var(--line);
+}.game-root .stat .k { font-size: 10.5px; color: var(--ink-faint); }.game-root .stat .v { font-size: 19px; font-weight: 800; letter-spacing: -0.6px; margin-top: 2px; }.game-root .board-list { display: flex; flex-direction: column; gap: 5px; margin-top: 10px; }.game-root .board-row {
+  display: flex; align-items: center; gap: 11px; padding: 8px 12px;
+  border-radius: var(--r-sm); background: rgba(255, 255, 255, 0.035); font-size: 12.5px;
+}.game-root .board-row .rk { font-weight: 800; width: 22px; color: var(--gold); }.game-root .board-row .nm { flex: 1; }.game-root .board-row .sc { font-weight: 700; }
+/* ═══════════════════════════ 토스트 ═══════════════════════════ */
+.game-root #toasts {
+  position: absolute; z-index: 45; bottom: 108px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column-reverse; gap: 7px; align-items: center; pointer-events: none;
+}.game-root .toast {
+  padding: 10px 17px; border-radius: 999px; font-size: 12.5px; font-weight: 600;
+  background: rgba(8, 12, 24, 0.94); border: 1px solid var(--line-strong);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+  animation: toastin 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+  display: flex; align-items: center; gap: 8px; white-space: nowrap;
+}.game-root .toast.out { animation: toastout 0.3s ease both; }.game-root .toast.good { border-color: rgba(51, 227, 159, 0.4); color: var(--green); }.game-root .toast.bad { border-color: rgba(255, 107, 138, 0.4); color: var(--red); }.game-root .toast.gold { border-color: rgba(255, 199, 107, 0.45); color: var(--gold); }
+@keyframes toastin { from { opacity: 0; transform: translateY(14px) scale(0.94); } to { opacity: 1; transform: none; } }
+@keyframes toastout { to { opacity: 0; transform: translateY(-10px) scale(0.96); } }
+/* ═══════════════════════════ 반응형 ═══════════════════════════ */
+@media (max-width: 1180px) {.game-root #status { width: 288px; }.game-root #board { width: 370px; }.game-root .act { min-width: 66px; padding: 8px 10px; }.game-root .act .hint { display: none; }
+}@media (max-width: 940px) {.game-root #hud { top: 8px; padding: 5px; gap: 0; }.game-root .hud-date { min-width: 104px; padding: 3px 12px 3px 10px; }.game-root .cr-chip { padding: 5px 10px; }.game-root .chip-label { display: none; }.game-root #status { display: none; }.game-root #board { left: 10px; right: 10px; width: auto; top: 66px; max-height: 46vh; }.game-root #dock { flex-direction: column; gap: 7px; bottom: 10px; width: calc(100vw - 20px); }.game-root .actions { overflow-x: auto; max-width: 100%; }.game-root .next-btn { width: 100%; justify-content: center; padding: 12px; }.game-root #toasts { bottom: 168px; }
+}.game-root .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
