@@ -28,6 +28,38 @@ export const MARITAL_OPTIONS = [
   { value: '기혼7초과', label: '혼인 7년 초과 / 기혼' },
 ];
 
+/** 자녀 수를 묻는 혼인 상태 — 미혼이면 묻지 않는다 */
+export const MARRIED_STATES = new Set(['예비', '신혼7', '기혼7초과']);
+export const isMarried = (profile) => MARRIED_STATES.has(profile.marital);
+
+/**
+ * 거주지·소득 근거지 선택지.
+ * 공고 데이터의 region 이 서울/경기/인천 세 값뿐이라 시·도 단위로 맞춘다.
+ */
+export const REGION_OPTIONS = [
+  { value: '서울', label: '서울특별시' },
+  { value: '경기', label: '경기도' },
+  { value: '인천', label: '인천광역시' },
+  { value: '기타', label: '그 외 지역' },
+];
+
+/**
+ * 공공주택 특별공급 자산기준 (2026년 가정치, 단위: 만원).
+ * 공고문에 자산기준이 실려 있지 않아 LH·SH 공고에 공통 규칙으로 적용한다.
+ */
+export const ASSET_LIMIT = { total: 34_500, car: 3_900 };
+
+/**
+ * 민영주택 청약 예치금 기준 — 전용 85㎡ 이하 (단위: 만원).
+ * 공고 데이터에 주택형별 면적이 없어 85㎡ 이하를 가정한다.
+ */
+export const DEPOSIT_BASELINE = { 서울: 300, 인천: 250, 경기: 200, 기타: 200 };
+
+/** 공공분양 일반공급에서 납입 인정 횟수를 보는 최소 기준 */
+export const PUBLIC_MIN_SUB_COUNT = 24;
+
+const num = (v) => Number(v) || 0;
+
 export const DEFAULT_PROFILE = {
   age: 34,
   household: 3,
@@ -39,6 +71,25 @@ export const DEFAULT_PROFILE = {
   firstHome: true,
   parentSupport: false,
   newborn: false, // 2년 이내 출생 자녀 (신생아 특별공급)
+
+  // 거주지 · 소득 근거지 — 해당지역 우선공급 판단에 쓴다
+  residence: '경기',
+  incomeBase: '경기',
+
+  // 총자산 (단위: 만원)
+  assetRealty: 0,
+  assetCar: 0,
+  assetFinance: 0,
+  assetEtc: 0,
+
+  // 청약통장
+  subCount: 30, // 납입 인정 횟수
+  subTotal: 300, // 납입 총액 (만원)
+
+  // 월평균 소득 계산기 입력 — 연소득 기준 (만원)
+  incomeSelf: 0,
+  incomeSpouse: 0,
+  incomeOther: 0,
 };
 
 export function createProfile() {
@@ -47,7 +98,35 @@ export function createProfile() {
 
 export function incomePercent(profile) {
   const base = baselineIncome(profile.household);
-  return Math.round(((Number(profile.income) || 0) / base) * 100);
+  return Math.round((num(profile.income) / base) * 100);
+}
+
+/** 부동산 + 자동차 + 금융 + 일반자산 (만원) */
+export function totalAssets(profile) {
+  return num(profile.assetRealty) + num(profile.assetCar) + num(profile.assetFinance) + num(profile.assetEtc);
+}
+
+/** 계산기: 연소득 합계 ÷ 12 → 월평균 소득 (만원) */
+export function monthlyFromAnnual(profile) {
+  const annual = num(profile.incomeSelf) + num(profile.incomeSpouse) + num(profile.incomeOther);
+  return Math.round(annual / 12);
+}
+
+export const isPublicSupply = (notice) => notice.agency === 'LH' || notice.agency === 'SH';
+
+export function depositBaseline(region) {
+  return DEPOSIT_BASELINE[region] ?? DEPOSIT_BASELINE.기타;
+}
+
+/**
+ * 해당지역 우선공급 순위.
+ * 거주지가 같으면 해당지역, 소득 근거지(직장)만 같으면 그다음, 나머지는 기타지역.
+ * 신청 자체를 막지는 않으므로 탈락 사유가 아니라 참고 정보로만 돌려준다.
+ */
+export function localPriority(profile, notice) {
+  if (profile.residence === notice.region) return { key: 'local', label: '해당지역 (1순위 우선공급)' };
+  if (profile.incomeBase === notice.region) return { key: 'work', label: '소득 근거지 일치 (지역 우선 가능)' };
+  return { key: 'other', label: '기타지역' };
 }
 
 /** 유형별 조건 검사. 통과하면 null, 막히면 사유 문자열을 돌려준다. */
@@ -105,6 +184,10 @@ export function evaluate(notice, profile) {
   const missed = [];
   const blockers = [];
 
+  const isPublic = isPublicSupply(notice);
+  const assets = totalAssets(profile);
+  const region = localPriority(profile, notice);
+
   // 공고 단위 조건 — 통장 가입기간·신청 연령은 유형과 무관하게 먼저 막힌다.
   if (notice.minSubMonths && (Number(profile.subMonths) || 0) < notice.minSubMonths) {
     blockers.push(`청약통장 ${notice.minSubMonths}개월 이상 필요 (내 조건 ${Number(profile.subMonths) || 0}개월)`);
@@ -113,11 +196,37 @@ export function evaluate(notice, profile) {
     blockers.push(`만 ${notice.minAge}세 이상 신청 가능`);
   }
 
+  // 민영주택은 지역별 예치금을 채워야 1순위가 된다 (전용 85㎡ 이하 기준).
+  if (!isPublic) {
+    const need = depositBaseline(notice.region);
+    if (num(profile.subTotal) < need) {
+      blockers.push(`${notice.region} 예치금 ${need}만원 이상 필요 (내 통장 ${num(profile.subTotal)}만원 · 85㎡ 이하 기준)`);
+    }
+  } else if (num(profile.subCount) < PUBLIC_MIN_SUB_COUNT) {
+    // 공공분양은 가입기간과 별개로 납입 인정 횟수를 본다.
+    blockers.push(`공공분양 납입 인정 ${PUBLIC_MIN_SUB_COUNT}회 이상 권장 (내 통장 ${num(profile.subCount)}회)`);
+  }
+
+  // 공공주택 특별공급 자산기준 — 초과하면 특별공급만 막히고 일반공급은 남는다.
+  const overAsset = isPublic && assets > ASSET_LIMIT.total;
+  const overCar = isPublic && num(profile.assetCar) > ASSET_LIMIT.car;
+
   for (const sp of notice.special ?? []) {
     const label = SPECIAL_LABEL[sp.type] ?? sp.type;
 
     if (sp.requiresNoHouse && !profile.noHouse) {
       missed.push({ type: sp.type, label, reason: '무주택 세대구성원 요건' });
+      continue;
+    }
+
+    if (sp.type !== '일반공급' && (overAsset || overCar)) {
+      missed.push({
+        type: sp.type,
+        label,
+        reason: overAsset
+          ? `총자산 ${assets.toLocaleString()}만원 > 기준 ${ASSET_LIMIT.total.toLocaleString()}만원`
+          : `자동차 ${num(profile.assetCar).toLocaleString()}만원 > 기준 ${ASSET_LIMIT.car.toLocaleString()}만원`,
+      });
       continue;
     }
 
@@ -160,6 +269,10 @@ export function evaluate(notice, profile) {
     missed,
     blockers,
     incomePct: pct,
+    /** 해당지역 우선공급 여부 — 탈락 사유가 아니라 참고 정보 */
+    region,
+    assets,
+    isPublic,
   };
 }
 

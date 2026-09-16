@@ -49,4 +49,5 @@ export const api = {
     request('POST', `/comments/${encodeURIComponent(commentId)}/report`, { reason }),
   visit: (noticeId) => request('POST', `/notices/${encodeURIComponent(noticeId)}/visit`),
   saveProfile: (profile) => request('PUT', '/profile', { profile }),
+  toggleSchedule: (noticeId) => request('POST', `/notices/${encodeURIComponent(noticeId)}/schedule/toggle`),
 };

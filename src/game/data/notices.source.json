@@ -1,0 +1,1965 @@
+[
+  {
+    "id": "n19",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "야목역 서희스타힐스 그랜드힐(조합원 취소분)",
+    "region": "경기",
+    "district": "화성시",
+    "housingType": "민간분양",
+    "announce": "2026-07-02",
+    "deadline": "2026-07-15",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 400,000,000 ~ 최고 576,000,000 (표본 14건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n20",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "동작 센트럴 동문 디 이스트",
+    "region": "서울",
+    "district": "동작구",
+    "housingType": "민간분양",
+    "announce": "2026-07-02",
+    "deadline": "2026-07-15",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 120,600,000 ~ 최고 1,707,000,000 (표본 136건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n21",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "남양주 진접 서한이다음(S1BL)",
+    "region": "경기",
+    "district": "남양주시",
+    "housingType": "민간분양",
+    "announce": "2026-07-09",
+    "deadline": "2026-07-22",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 535,400,000 ~ 최고 673,700,000 (표본 24건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n22",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "평택역 더센트럴45",
+    "region": "경기",
+    "district": "평택시",
+    "housingType": "민간분양",
+    "announce": "2026-07-09",
+    "deadline": "2026-07-22",
+    "special": [
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 527,000,000 ~ 최고 702,000,000 (표본 33건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n23",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "호반써밋 풍무Ⅲ",
+    "region": "경기",
+    "district": "김포시",
+    "housingType": "민간분양",
+    "announce": "2026-07-09",
+    "deadline": "2026-07-22",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 545,100,000 ~ 최고 762,500,000 (표본 35건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n24",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "오산헤리티지자이 1단지",
+    "region": "경기",
+    "district": "오산시",
+    "housingType": "민간분양",
+    "announce": "2026-07-10",
+    "deadline": "2026-07-21",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 669,800,000 ~ 최고 794,000,000 (표본 29건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n25",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "오산헤리티지자이 2단지",
+    "region": "경기",
+    "district": "오산시",
+    "housingType": "민간분양",
+    "announce": "2026-07-10",
+    "deadline": "2026-07-21",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 669,800,000 ~ 최고 794,000,000 (표본 23건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n26",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "의왕역 SK VIEW",
+    "region": "경기",
+    "district": "의왕시",
+    "housingType": "민간분양",
+    "announce": "2026년 07월 10일(금)",
+    "deadline": "2026-07-22",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 395,000,000 ~ 최고 1,098,000,000 (표본 38건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n27",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "역북 서희스타힐스 프라임시티(조합원 취소분)",
+    "region": "경기",
+    "district": "용인시",
+    "housingType": "민간분양",
+    "announce": "2026-07-16",
+    "deadline": "2026-08-03",
+    "special": [],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 457,000,000 ~ 최고 655,000,000 (표본 5건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n28",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "이천 휴먼빌 클래스원",
+    "region": "경기",
+    "district": "이천시",
+    "housingType": "민간분양",
+    "announce": "2026-07-16",
+    "deadline": "2026-07-29",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 521,300,000 ~ 최고 574,400,000 (표본 17건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n29",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "월계 중흥S-클래스 리비에르",
+    "region": "서울",
+    "district": "노원구",
+    "housingType": "민간분양",
+    "announce": "2026-07-16",
+    "deadline": "2026-07-29",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 682,000,000 ~ 최고 1,499,100,000 (표본 16건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n30",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "한강 푸르지오 리버프론트",
+    "region": "경기",
+    "district": "김포시",
+    "housingType": "민간분양",
+    "announce": "2026-07-30",
+    "deadline": "2026-08-12",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 643,000,000 ~ 최고 773,000,000 (표본 79건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n31",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "용인반도체클러스터 동일하이빌 파크밸리(D1-1블록)",
+    "region": "경기",
+    "district": "용인시",
+    "housingType": "민간분양",
+    "announce": "2026-08-07",
+    "deadline": "2026-08-18",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 370,000,000 ~ 최고 534,000,000 (표본 52건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n32",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "더샵 신길센트럴시티(조합원 취소분)",
+    "region": "서울",
+    "district": "영등포구",
+    "housingType": "민간분양",
+    "announce": "2026-08-07",
+    "deadline": "2026-08-20",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 1,180,000,000 ~ 최고 1,840,000,000 (표본 39건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n33",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "써밋 클라비온",
+    "region": "서울",
+    "district": "영등포구",
+    "housingType": "민간분양",
+    "announce": "2026-08-07",
+    "deadline": "2026-08-20",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 1,198,400,000 ~ 최고 1,866,300,000 (표본 29건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n34",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "충정로역자이르네",
+    "region": "서울",
+    "district": "중구",
+    "housingType": "민간분양",
+    "announce": "2026-08-07",
+    "deadline": "2026-08-20",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 100,400,000 ~ 최고 2,455,000,000 (표본 95건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n35",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "두산위브더제니스 부천",
+    "region": "경기",
+    "district": "부천시",
+    "housingType": "민간분양",
+    "announce": "2026-08-12",
+    "deadline": "2026-08-21",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 733,000,000 ~ 최고 1,182,000,000 (표본 41건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n36",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "오남역 서희스타힐스 여의재 1단지",
+    "region": "경기",
+    "district": "남양주시",
+    "housingType": "민간분양",
+    "announce": "2026-08-13",
+    "deadline": "2026-08-26",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 510,000,000 ~ 최고 719,000,000 (표본 26건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n37",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "의왕역 한신더휴",
+    "region": "경기",
+    "district": "의왕시",
+    "housingType": "민간분양",
+    "announce": "2026년 08월 13일(목)",
+    "deadline": "2026-08-26",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 517,000,000 ~ 최고 940,000,000 (표본 38건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n38",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "상동역 롯데캐슬 시그니처",
+    "region": "경기",
+    "district": "부천시",
+    "housingType": "민간분양",
+    "announce": "2026-08-14",
+    "deadline": "2026-08-26",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 1,401,000,000 ~ 최고 1,638,000,000 (표본 75건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n39",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "쌍용 더 플래티넘 서대문",
+    "region": "서울",
+    "district": "서대문구",
+    "housingType": "민간분양",
+    "announce": "2026-08-14",
+    "deadline": "2026-08-26",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 107,850,000 ~ 최고 1,373,300,000 (표본 68건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n40",
+    "agency": "LH",
+    "agencyName": null,
+    "title": "검암역 푸르지오 프라베뉴(B-1BL) 공공분양주택",
+    "region": "인천",
+    "district": "서해구",
+    "housingType": "공공분양",
+    "announce": "2026-08-21",
+    "deadline": "2026-09-02",
+    "special": [
+      {
+        "type": "이주자주택",
+        "requiresNoHouse": false,
+        "incomeLimit": null,
+        "세대수": 3
+      },
+      {
+        "type": "협의양도인",
+        "requiresNoHouse": false,
+        "incomeLimit": null,
+        "세대수": 4
+      },
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null,
+        "세대수": 44
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 120,
+        "세대수": 21
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": 120,
+        "세대수": 44
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 130,
+        "세대수": 22
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 130,
+        "세대수": 66
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 140,
+        "세대수": 44
+      },
+      {
+        "type": "신생아우선공급(1순위자)",
+        "requiresNoHouse": true,
+        "incomeLimit": null,
+        "세대수": 88
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null,
+        "세대수": 105
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 427,100,000 ~ 최고 639,100,000 (표본 30건, 자동추출-검증완료) | 총 441세대, 특별공급 세대수는 원문 표에서 실측"
+  },
+  {
+    "id": "n41",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "시티오씨엘 9단지 오션파크뷰",
+    "region": "인천",
+    "district": "미추홀구",
+    "housingType": "민간분양",
+    "announce": "2026-08-21",
+    "deadline": "2026-09-02",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 457,200,000 ~ 최고 712,900,000 (표본 32건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n42",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "브라운스톤 월곡 센트럴",
+    "region": "서울",
+    "district": "성북구",
+    "housingType": "민간분양",
+    "announce": "2026-08-28",
+    "deadline": "2026-09-09",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 778,000,000 ~ 최고 1,075,000,000 (표본 26건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n43",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "더샵 여주역더퍼스트",
+    "region": "경기",
+    "district": "여주시",
+    "housingType": "민간분양",
+    "announce": "2026-09-03",
+    "deadline": "2026-09-16",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 476,910,000 ~ 최고 519,650,000 (표본 18건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n44",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "시흥 은계 에피트(조합원 취소분)",
+    "region": "경기",
+    "district": "시흥시",
+    "housingType": "민간분양",
+    "announce": "2026-09-04",
+    "deadline": "2026-09-17",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 304,810,000 ~ 최고 485,000,000 (표본 19건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n45",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "오남역 서희스타힐스 여의재 3단지(조합원 취소분)",
+    "region": "경기",
+    "district": "남양주시",
+    "housingType": "민간분양",
+    "announce": "2026-09-09",
+    "deadline": "2026-09-23",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 492,000,000 ~ 최고 709,000,000 (표본 19건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n46",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "중동역 다채로움 더원",
+    "region": "경기",
+    "district": "부천시",
+    "housingType": "민간분양",
+    "announce": "2026-09-10",
+    "deadline": "2026-09-23",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 517,000,000 ~ 최고 796,000,000 (표본 30건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n47",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "더샵 분당하이스트",
+    "region": "경기",
+    "district": "성남시 분당구",
+    "housingType": "민간분양",
+    "announce": "2026-09-11",
+    "deadline": "2026-09-23",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 202,800,000 ~ 최고 298,100,000 (표본 83건, 자동추출-검증완료) | 특별공급 77세대(기관추천14/다자녀14/신혼부부21/노부모부양4/생애최초10/신생아14)"
+  },
+  {
+    "id": "n48",
+    "agency": "민간",
+    "agencyName": null,
+    "title": "화서역 호수공원 아너스빌",
+    "region": "경기",
+    "district": "수원시",
+    "housingType": "민간분양",
+    "announce": "2026-09-11",
+    "deadline": "2026-09-23",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 160
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 160
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 832,000,000 ~ 최고 898,000,000 (표본 39건, 자동추출-검증완료)"
+  },
+  {
+    "id": "n49",
+    "agency": "LH",
+    "agencyName": null,
+    "title": "힐스테이트 고덕엘리스트 A12BL 공공분양주택",
+    "region": "경기",
+    "district": "평택시",
+    "housingType": "공공분양",
+    "announce": "2026-09-11",
+    "deadline": "2026-09-23",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null,
+        "세대수": 95
+      },
+      {
+        "type": "국가유공자",
+        "requiresNoHouse": true,
+        "incomeLimit": null,
+        "세대수": 47
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 120,
+        "세대수": 94
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 130,
+        "세대수": 94
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 130,
+        "세대수": 141
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": 120,
+        "세대수": 47
+      },
+      {
+        "type": "지역균형발전",
+        "requiresNoHouse": true,
+        "incomeLimit": null,
+        "세대수": 189
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 140,
+        "세대수": 94
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null,
+        "세대수": 141
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 509,320,000 ~ 최고 584,200,000 (표본 35건, 자동추출-검증완료) | 총 942세대, 특별공급 세대수는 원문 표에서 실측"
+  },
+  {
+    "id": "n50",
+    "agency": "LH",
+    "agencyName": null,
+    "title": "힐스테이트 고덕엘리스트 A65BL 공공분양주택",
+    "region": "경기",
+    "district": "평택시",
+    "housingType": "공공분양",
+    "announce": "2026-09-11",
+    "deadline": "2026-09-23",
+    "special": [
+      {
+        "type": "기관추천",
+        "requiresNoHouse": true,
+        "incomeLimit": null,
+        "세대수": 83
+      },
+      {
+        "type": "국가유공자",
+        "requiresNoHouse": true,
+        "incomeLimit": null,
+        "세대수": 42
+      },
+      {
+        "type": "다자녀",
+        "requiresNoHouse": true,
+        "minChildren": 2,
+        "incomeLimit": 120,
+        "세대수": 84
+      },
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": 130,
+        "세대수": 84
+      },
+      {
+        "type": "생애최초",
+        "requiresNoHouse": true,
+        "incomeLimit": 130,
+        "세대수": 126
+      },
+      {
+        "type": "노부모부양",
+        "requiresNoHouse": true,
+        "incomeLimit": 120,
+        "세대수": 42
+      },
+      {
+        "type": "지역균형발전",
+        "requiresNoHouse": true,
+        "incomeLimit": null,
+        "세대수": 167
+      },
+      {
+        "type": "신생아",
+        "requiresNoHouse": true,
+        "incomeLimit": 140,
+        "세대수": 84
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null,
+        "세대수": 125
+      }
+    ],
+    "minSubMonths": 24,
+    "minAge": 19,
+    "url": null,
+    "_비고": "분양가(공급금액) 범위(원): 최저 494,640,000 ~ 최고 566,170,000 (표본 28건, 자동추출-검증완료) | 총 837세대, 특별공급 세대수는 원문 표에서 실측"
+  },
+  {
+    "id": "n51",
+    "agency": "LH",
+    "agencyName": "한국토지주택공사",
+    "title": "일반 매입임대주택(경기북부)",
+    "region": "경기",
+    "district": "의정부시, 포천시, 양주시, 동두천시, 김포시, 하남시, 양평군",
+    "housingType": "공공임대(매입임대)",
+    "announce": "2026-09-10",
+    "deadline": "2026-10-22",
+    "special": [
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 0,
+    "minAge": 19,
+    "url": "https://www.lh.or.kr",
+    "_비고": "청약통장 불필요(무주택세대구성원 요건 및 소득/자산기준 중심). 정확한 임대조건은 첨부 공급주택목록 참고 필요"
+  },
+  {
+    "id": "n52",
+    "agency": "LH",
+    "agencyName": "한국토지주택공사",
+    "title": "일반 매입임대주택(경기남부, 방문접수)",
+    "region": "경기",
+    "district": "안산시, 안양시, 수원시, 여주시, 용인시, 이천시, 화성시, 오산시, 평택시, 안성시, 시흥시, 광명시",
+    "housingType": "공공임대(매입임대)",
+    "announce": "2026-09-10",
+    "deadline": "2026-10-28",
+    "special": [
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 0,
+    "minAge": 19,
+    "url": "https://www.lh.or.kr",
+    "_비고": "청약통장 불필요(무주택세대구성원 요건 및 소득/자산기준 중심). 정확한 임대조건은 첨부 공급주택목록 참고 필요"
+  },
+  {
+    "id": "n53",
+    "agency": "LH",
+    "agencyName": "한국토지주택공사",
+    "title": "신혼·신생아 매입임대주택Ⅱ 용인시",
+    "region": "경기",
+    "district": "용인시",
+    "housingType": "공공임대(매입임대)",
+    "announce": "2026-09-07",
+    "deadline": "2026-09-23",
+    "special": [
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": null
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 0,
+    "minAge": 19,
+    "url": "https://www.lh.or.kr",
+    "_비고": "청약통장 불필요(무주택세대구성원 요건 및 소득/자산기준 중심). 정확한 임대조건은 첨부 공급주택목록 참고 필요"
+  },
+  {
+    "id": "n54",
+    "agency": "LH",
+    "agencyName": "한국토지주택공사",
+    "title": "신혼·신생아 매입임대주택Ⅱ 화성시·평택시",
+    "region": "경기",
+    "district": "화성시·평택시",
+    "housingType": "공공임대(매입임대)",
+    "announce": "2026-09-07",
+    "deadline": "2026-09-23",
+    "special": [
+      {
+        "type": "신혼부부",
+        "requiresNoHouse": true,
+        "maxMarriageYears": 7,
+        "incomeLimit": null
+      },
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 0,
+    "minAge": 19,
+    "url": "https://www.lh.or.kr",
+    "_비고": "청약통장 불필요(무주택세대구성원 요건 및 소득/자산기준 중심). 정확한 임대조건은 첨부 공급주택목록 참고 필요"
+  },
+  {
+    "id": "n55",
+    "agency": "LH",
+    "agencyName": "한국토지주택공사",
+    "title": "26-4차 든든전세주택(인천본부)",
+    "region": "인천",
+    "district": "미추홀구, 남동구, 부평구, 계양구",
+    "housingType": "공공임대(전세형/든든전세)",
+    "announce": "2026-09-09",
+    "deadline": "2026-09-22",
+    "special": [
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": null
+      }
+    ],
+    "minSubMonths": 0,
+    "minAge": 19,
+    "url": "https://www.lh.or.kr",
+    "_비고": "청약통장 불필요(무주택세대구성원 요건 및 소득/자산기준 중심). 정확한 임대조건은 첨부 공급주택목록 참고 필요"
+  },
+  {
+    "id": "n56",
+    "agency": "LH",
+    "agencyName": "한국토지주택공사",
+    "title": "부천시 영구임대주택 예비입주자",
+    "region": "경기",
+    "district": "부천시",
+    "housingType": "공공임대(영구임대)",
+    "announce": "2026-09-04",
+    "deadline": "2026-09-18",
+    "special": [
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": 70
+      }
+    ],
+    "minSubMonths": 0,
+    "minAge": 19,
+    "url": "https://www.lh.or.kr",
+    "_비고": "청약통장 불필요(무주택세대구성원 요건 및 소득/자산기준 중심). 정확한 임대조건은 첨부 공급주택목록 참고 필요"
+  },
+  {
+    "id": "n57",
+    "agency": "LH",
+    "agencyName": "한국토지주택공사",
+    "title": "의정부송산3단지 50년공공임대",
+    "region": "경기",
+    "district": "의정부시",
+    "housingType": "공공임대(50년임대)",
+    "announce": "2026-09-10",
+    "deadline": "2026-09-30",
+    "special": [
+      {
+        "type": "일반공급",
+        "requiresNoHouse": true,
+        "incomeLimit": 70
+      }
+    ],
+    "minSubMonths": 0,
+    "minAge": 19,
+    "url": "https://www.lh.or.kr",
+    "_비고": "청약통장 불필요(무주택세대구성원 요건 및 소득/자산기준 중심). 정확한 임대조건은 첨부 공급주택목록 참고 필요"
+  },
+  {
+    "id": "n58",
+    "agency": "SH",
+    "agencyName": "서울주택도시공사(SH)",
+    "title": "마곡지구 17단지 토지임대부 분양주택 입주 및 소유권이전등기 조건 변경 안내",
+    "region": "서울",
+    "district": "강서구",
+    "housingType": "토지임대부 분양주택(기존 계약자 대상 안내문)",
+    "announce": "2026-08-31",
+    "deadline": "2026-09-18",
+    "special": [],
+    "minSubMonths": null,
+    "minAge": null,
+    "url": null,
+    "_문서성격": "신규 청약공고문이 아님. 이미 분양계약을 체결한 기존 수분양자 대상 '입주/소유권이전 조건 변경' 안내문이라 special/deadline/minSubMonths 등 청약자격 관련 필드는 해당 없음(null 처리). (deadline 필드는 청약마감일이 아니라 특약체결 마감일 2026-09-18을 넣음)",
+    "_비고": {
+      "배경": "2026.8.25 국토부의 토지임대부 분양주택 디딤돌대출 방공제 면제 결정에 따른 조치",
+      "변경내용": "잔금 완납 후 입주·소유권이전 → 잔금 완납 전 입주·소유권이전으로 변경(특약 체결 시)",
+      "특약체결대상": "방공제분(5,500만원) 대출로 잔금을 납입하려는 자 중, 대출 실행 전 입주(소유권이전)를 계획하는 수분양자",
+      "특약체결기간": "2026-09-01 ~ 2026-09-18 (평일 10:00~17:00, 점심시간 제외, 마감 30분 전 접수마감)",
+      "소급적용대상": "2026.8.28(금)~8.31(월) 기입주자도 특약체결 가능(소급적용)",
+      "입주예정_잔금납부기한": "2026-08-28 ~ 2026-11-25 (변동없음)",
+      "특례이자율": "미납잔금(방공제분)에 대해 연 3% (기존 연체이자율 7.5% 대신 적용)",
+      "계약해제_유보기간": "2026-11-25까지 (단, HUG/은행 사정으로 대출 지연 시 '대출실행 개시일로부터 7일까지' 연장)",
+      "방공제분_대출실행예정시기": "2026-10-19 ~ 2026-11-25",
+      "특약체결장소": [
+        {
+          "기간": "2026-08-28~08-31 기입주자",
+          "장소": "마곡엠밸리 17단지 입주지원센터"
+        },
+        {
+          "기간": "2026-09-01~09-04 입주예정자",
+          "장소": "마곡엠밸리 17단지 입주지원센터"
+        },
+        {
+          "기간": "2026-09-05~11-25 입주예정자",
+          "장소": "서울주택도시개발공사 본사 분양부"
+        }
+      ],
+      "필요서류_특약체결": [
+        "주택분양계약서 및 토지임대차계약서 원본",
+        "계약자 신분증",
+        "디딤돌대출 약정서",
+        "(입주 후 특약체결자) 본인 명의 통장 사본",
+        "(대리인 방문 시) 위임장 및 첨부서류"
+      ],
+      "취득세_유의사항": "청약 시 무주택세대구성원 인정 여부와 지방세법상 주택 수 산정 기준이 달라 취득세가 중과될 수 있음",
+      "문의처": {
+        "특약체결": "SH 분양부 02-3410-7494~7",
+        "매매대금수납_반환": "SH 수납부 02-3410-7503",
+        "취득세": "강서구청 세무관리과 02-2600-6346"
+      }
+    }
+  }
+]

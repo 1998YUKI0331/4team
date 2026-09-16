@@ -3,6 +3,7 @@ import { computed, nextTick, ref, watch } from 'vue';
 import { formatDate, priceLabel, statusLabelOf } from '../lib/notices';
 import { communityStore } from '../stores/community';
 import { CROWN_RANKS, RANK_LIMIT, visitStore } from '../stores/visits';
+import { scoreColor, scoreGrade, scoresOf } from '../lib/scoreboard';
 import RankCrown from './RankCrown.vue';
 
 const props = defineProps({
@@ -17,6 +18,11 @@ const el = ref(null);
 const price = computed(() => priceLabel(props.item));
 const tags = computed(() => props.item.specialTypes.filter((t) => t !== '일반공급').slice(0, 4));
 const postCount = computed(() => communityStore.countFor(props.item.id));
+
+/** 입지 분석 점수 — 분석 대상이 아닌 공고는 배지를 띄우지 않는다. */
+const analysis = computed(() => scoresOf(props.item.id));
+const score = computed(() => analysis.value?.total ?? null);
+const ratio = computed(() => analysis.value?.ratio ?? null);
 
 const visits = computed(() => visitStore.countFor(props.item.id));
 const rank = computed(() => visitStore.rankOf(props.item.id));
@@ -50,6 +56,12 @@ watch(
       <span class="card__type">{{ item.category }}</span>
       <span v-if="item.agency !== '민간'" class="card__agency">{{ item.agency }}</span>
       <span v-if="match?.ok" class="badge badge--match" :class="`badge--tier-${match.tier}`">{{ match.tierLabel }}</span>
+      <span
+        v-if="score != null"
+        class="card__score"
+        :style="{ background: scoreColor(score) }"
+        :title="`입지 분석 ${score}점 (${scoreGrade(score)})`"
+      >{{ score }}</span>
     </div>
 
     <h3 class="card__title">
@@ -62,7 +74,12 @@ watch(
       <span v-if="item.address" class="card__addr"> · {{ item.address }}</span>
     </p>
 
-    <p class="card__price">{{ price }}</p>
+    <p class="card__price">
+      {{ price }}
+      <em v-if="ratio != null && !analysis.landLease" class="card__ratio" :style="{ color: scoreColor(analysis.price) }">
+        주변 시세 {{ ratio.toFixed(2) }}배
+      </em>
+    </p>
 
     <div class="card__foot">
       <span>공고 {{ formatDate(item.announce) }}</span>
