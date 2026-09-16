@@ -162,7 +162,15 @@ export function createApi(db) {
       return res.status(400).json({ error: '프로필 형식이 올바르지 않습니다.' });
     }
     // 값 종류를 제한해 임의의 데이터를 쌓아 두지 않는다.
-    const allowed = ['age', 'household', 'marital', 'children', 'subMonths', 'income', 'noHouse', 'firstHome', 'parentSupport', 'newborn'];
+    // 새 입력을 MatchPanel 에 추가하면 여기에도 넣어야 저장된다.
+    const allowed = [
+      'age', 'household', 'marital', 'children', 'subMonths', 'income',
+      'noHouse', 'firstHome', 'parentSupport', 'newborn',
+      'residence', 'incomeBase',
+      'assetRealty', 'assetCar', 'assetFinance', 'assetEtc',
+      'subCount', 'subTotal',
+      'incomeSelf', 'incomeSpouse', 'incomeOther',
+    ];
     const slim = {};
     for (const key of allowed) {
       const v = profile[key];

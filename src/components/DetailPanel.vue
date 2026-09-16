@@ -112,6 +112,9 @@ function specialDetail(s) {
     <div v-if="tab === 'info'" class="detail__body">
       <section v-if="match" class="matchbox" :class="match.ok ? 'is-ok' : 'is-no'">
         <h3>{{ match.ok ? `내 조건 — ${match.tierLabel}` : '지금 조건으로는 어려워요' }}</h3>
+        <p v-if="match.region" class="matchbox__region" :class="`is-${match.region.key}`">
+          {{ item.region }} · {{ match.region.label }}
+        </p>
         <ul v-if="match.matched.length" class="matchbox__list">
           <li v-for="m in match.matched" :key="m.type" :class="{ 'is-uncertain': m.uncertain }">
             <b>{{ m.label }}</b><span>{{ m.note }}</span>
