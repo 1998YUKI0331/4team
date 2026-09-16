@@ -5,13 +5,15 @@ import { communityStore } from '../stores/community';
 import { scheduleStore } from '../stores/schedule';
 import { CROWN_RANKS, RANK_LIMIT, visitStore } from '../stores/visits';
 import { playNotice } from '../stores/app';
+import { scoreColor, scoresOf } from '../lib/scoreboard';
+import AnalysisPanel from './AnalysisPanel.vue';
 import CommunityPanel from './CommunityPanel.vue';
 import RankCrown from './RankCrown.vue';
 
 const props = defineProps({
   item: { type: Object, required: true },
   match: { type: Object, default: null },
-  /** 'info' | 'community' — 커뮤니티는 화면이 넓을 때만 이 패널 안에서 열린다. */
+  /** 'info' | 'analysis' | 'community' — 커뮤니티는 화면이 넓을 때만 이 패널 안에서 열린다. */
   tab: { type: String, default: 'info' },
 });
 
@@ -41,6 +43,9 @@ const showRank = computed(() => rank.value && rank.value <= RANK_LIMIT);
 const extras = computed(() =>
   props.item.extra ? Object.entries(props.item.extra).filter(([, v]) => v && typeof v !== 'object') : []
 );
+
+/** 입지 분석 — 임대처럼 비교 단지를 특정할 수 없는 공고는 점수가 없다. */
+const totalScore = computed(() => scoresOf(props.item.id)?.total ?? null);
 
 function specialDetail(s) {
   const bits = [];
@@ -79,6 +84,19 @@ function specialDetail(s) {
     <nav class="detail__tabs" role="tablist">
       <button type="button" role="tab" :aria-selected="tab === 'info'" :class="{ 'is-on': tab === 'info' }" @click="emit('select-tab', 'info')">
         공고 정보
+      </button>
+      <button
+        type="button"
+        role="tab"
+        :aria-selected="tab === 'analysis'"
+        :class="{ 'is-on': tab === 'analysis' }"
+        @click="emit('select-tab', 'analysis')"
+      >
+        입지 분석<i
+          v-if="totalScore != null"
+          class="detail__score"
+          :style="{ background: scoreColor(totalScore) }"
+        >{{ totalScore }}</i>
       </button>
       <button
         type="button"
@@ -180,6 +198,10 @@ function specialDetail(s) {
           🎮 이 단지로 시뮬레이션
         </button>
       </footer>
+    </div>
+
+    <div v-else-if="tab === 'analysis'" class="detail__body">
+      <AnalysisPanel :item="item" />
     </div>
 
     <div v-else class="detail__body detail__body--community">

@@ -6,7 +6,7 @@ dist/
 .DS_Store
 scripts/_*.mjs
 
-# 로컬 개발용 SQLite
+# 로컬 개발용 SQLite (저장소 루트의 data/ 만. 앵커가 없으면 src/data/ 까지 무시된다)
 /data/
 # Claude Code 로컬 실행 설정
 .claude/
