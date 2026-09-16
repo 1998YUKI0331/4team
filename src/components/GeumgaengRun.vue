@@ -3,7 +3,7 @@ import { onBeforeUnmount, onMounted, ref } from 'vue';
 
 /**
  * 금갱런 — 금갱이를 연속 5번 두드리면 열리는 숨겨진 크롬 공룡런 스타일 미니게임.
- * 스페이스바 / 위 화살표 / 클릭·탭으로 점프해서 장애물을 피한다.
+ * 스페이스바 / 위 화살표 / 클릭·탭으로 점프해서 장애물을 피한다. 공중에서 한 번 더 눌러 2단 점프도 가능하다.
  */
 
 const emit = defineEmits(['close']);
@@ -23,7 +23,9 @@ const FRAME_W = 208;
 const FRAME_H = 260;
 const FRAME_COUNT = 8;
 
-const player = { y: GROUND_Y - PLAYER_H, vy: 0, jumping: false };
+/** 착지 전까지 쓸 수 있는 점프 횟수(2단 점프). */
+const MAX_JUMPS = 2;
+const player = { y: GROUND_Y - PLAYER_H, vy: 0, jumpCount: 0 };
 let obstacles = [];
 let speed = 0.28;
 let elapsed = 0;
@@ -40,7 +42,7 @@ sprite.src = new URL('../assets/geumgaengi-typing.webp', import.meta.url).href;
 function reset() {
   player.y = GROUND_Y - PLAYER_H;
   player.vy = 0;
-  player.jumping = false;
+  player.jumpCount = 0;
   obstacles = [];
   speed = 0.28;
   elapsed = 0;
@@ -62,9 +64,9 @@ function jump() {
     start();
     return;
   }
-  if (!player.jumping) {
+  if (player.jumpCount < MAX_JUMPS) {
     player.vy = JUMP_VELOCITY;
-    player.jumping = true;
+    player.jumpCount += 1;
   }
 }
 
@@ -90,7 +92,7 @@ function loop(now) {
   if (player.y >= GROUND_Y - PLAYER_H) {
     player.y = GROUND_Y - PLAYER_H;
     player.vy = 0;
-    player.jumping = false;
+    player.jumpCount = 0;
   }
 
   speed = 0.28 + Math.min(elapsed / 20000, 0.35);
@@ -194,7 +196,7 @@ onBeforeUnmount(() => {
       />
 
       <p v-if="status === 'ready'" class="geumgaengrun__hint">
-        스페이스바 · 위 화살표 · 클릭/탭으로 점프! 장애물을 피해 보세요.
+        스페이스바 · 위 화살표 · 클릭/탭으로 점프! 공중에서 한 번 더 누르면 2단 점프.
       </p>
       <p v-else-if="status === 'over'" class="geumgaengrun__hint">
         게임 종료! 다시 눌러서 재도전하세요.
