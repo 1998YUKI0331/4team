@@ -9,6 +9,9 @@ const props = defineProps({
 
 const emit = defineEmits(['goto-notice']);
 
+/** server/db.js 의 HIDE_THRESHOLD 와 같은 값 — 안내 문구에만 쓰고 실제 판정은 서버가 한다. */
+const HIDE_THRESHOLD = 3;
+
 const sort = ref('latest');
 const openComments = ref(new Set());
 const draft = ref({ category: '분위기', title: '', content: '', author: '' });
@@ -84,6 +87,24 @@ async function submitComment(postId) {
     error.value = e.message;
   }
 }
+
+async function reportPost(postId) {
+  try {
+    await communityStore.reportPost(postId);
+    error.value = '';
+  } catch (e) {
+    error.value = e.message;
+  }
+}
+
+async function reportComment(commentId) {
+  try {
+    await communityStore.reportComment(commentId);
+    error.value = '';
+  } catch (e) {
+    error.value = e.message;
+  }
+}
 </script>
 
 <template>
@@ -101,6 +122,7 @@ async function submitComment(postId) {
 
     <p class="community__disclaimer">
       이 게시판의 글·댓글·공감은 <b>서버에 저장되어 모든 방문자에게 보입니다.</b> 개인정보는 남기지 말아 주세요.
+      부적절한 글·댓글은 🚩 신고해 주세요 — {{ HIDE_THRESHOLD }}명 이상 신고하면 자동으로 가려집니다.
     </p>
 
     <p v-if="error" class="community__error">{{ error }}</p>
@@ -129,7 +151,7 @@ async function submitComment(postId) {
       아직 이 단지에 글이 없어요.<br />가장 먼저 분위기·호재·생활 정보를 남겨보세요.
     </p>
 
-    <article v-for="p in posts" :key="p.id" class="post">
+    <article v-for="p in posts" :key="p.id" class="post" :class="{ 'post--hidden': p.hidden }">
       <div class="post__top">
         <span class="post__cat">{{ CATEGORY_LABEL[p.category] }}</span>
         <span class="post__meta">{{ p.author }} · {{ formatPostDate(p.createdAt) }}</span>
@@ -141,13 +163,30 @@ async function submitComment(postId) {
           {{ p.likedByMe ? '♥' : '♡' }} 공감 {{ p.likes }}
         </button>
         <button type="button" @click="toggleComments(p.id)">💬 댓글 {{ p.comments.length }}</button>
+        <button
+          type="button"
+          class="post__report"
+          :class="{ 'is-on': p.reportedByMe }"
+          :disabled="p.reportedByMe"
+          @click="reportPost(p.id)"
+        >
+          🚩 {{ p.reportedByMe ? '신고함' : '신고' }}
+        </button>
       </div>
 
       <div v-if="openComments.has(p.id)" class="post__comments">
-        <div v-for="c in p.comments" :key="c.id" class="comment">
+        <div v-for="c in p.comments" :key="c.id" class="comment" :class="{ 'comment--hidden': c.hidden }">
           <b>{{ c.author }}</b>
           <span>{{ c.content }}</span>
           <em>{{ formatPostDate(c.createdAt) }}</em>
+          <button
+            type="button"
+            class="comment__report"
+            :disabled="c.reportedByMe"
+            @click="reportComment(c.id)"
+          >
+            {{ c.reportedByMe ? '신고됨' : '🚩 신고' }}
+          </button>
         </div>
         <p v-if="!p.comments.length" class="comment comment--empty">첫 댓글을 남겨보세요.</p>
         <form class="comment__form" @submit.prevent="submitComment(p.id)">
