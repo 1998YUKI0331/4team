@@ -1094,6 +1094,11 @@ div:has(> .cluster-root) {
     transform: translateY(0);
   }
 
+  /* 공고 상세 바텀시트가 떠 있는 동안은 목록 시트를 완전히 감춘다 — 둘이 겹쳐 보이던 문제 수정 */
+  .sidebar.is-detail-open {
+    display: none;
+  }
+
   .sidebar__handle {
     display: flex;
     flex-direction: column;

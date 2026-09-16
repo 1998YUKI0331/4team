@@ -105,7 +105,7 @@ function specialDetail(s) {
         :class="{ 'is-on': tab === 'community' }"
         @click="emit('select-tab', 'community')"
       >
-        지역 커뮤니티<i v-if="postCount">{{ postCount }}</i>
+        커뮤니티<i v-if="postCount">{{ postCount }}</i>
       </button>
     </nav>
 

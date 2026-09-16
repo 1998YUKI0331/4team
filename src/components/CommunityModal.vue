@@ -22,12 +22,12 @@ onUnmounted(() => {
 
 <template>
   <Teleport to="body">
-    <div class="layer" role="dialog" aria-modal="true" aria-label="지역 커뮤니티">
+    <div class="layer" role="dialog" aria-modal="true" aria-label="커뮤니티">
       <div class="layer__dim" @click="emit('close')" />
       <div class="layer__panel">
         <header class="layer__head">
           <div>
-            <strong>지역 커뮤니티</strong>
+            <strong>커뮤니티</strong>
             <span>{{ notice.title }}</span>
           </div>
           <button type="button" class="detail__close" aria-label="닫기" @click="emit('close')">×</button>

@@ -132,7 +132,10 @@ onUnmounted(() => {
     <GameView v-if="ui.view === 'game'" />
 
     <div v-show="ui.view === 'map'" class="app__body">
-      <section class="sidebar" :class="{ 'is-open': ui.sheetOpen }">
+      <section
+        class="sidebar"
+        :class="{ 'is-open': ui.sheetOpen, 'is-detail-open': compact && !!selected }"
+      >
         <button
           type="button"
           class="sidebar__handle"
