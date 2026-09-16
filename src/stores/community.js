@@ -116,6 +116,19 @@ export const communityStore = {
     replaceEverywhere(post);
     return post;
   },
+
+  /** 신고는 취소할 수 없는 단방향 동작이다 — 일정 인원이 신고하면 서버가 내용을 모두에게 가린다. */
+  async reportPost(postId, reason = '') {
+    const { post } = await api.reportPost(postId, reason);
+    replaceEverywhere(post);
+    return post;
+  },
+
+  async reportComment(commentId, reason = '') {
+    const { post } = await api.reportComment(commentId, reason);
+    replaceEverywhere(post);
+    return post;
+  },
 };
 
 export function formatPostDate(iso) {

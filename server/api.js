@@ -2,6 +2,7 @@ import express from 'express';
 import { randomUUID } from 'node:crypto';
 import {
   CATEGORIES,
+  commentExists,
   getProfile,
   insertComment,
   insertPost,
@@ -10,6 +11,8 @@ import {
   postCounts,
   postExists,
   recordVisit,
+  reportComment,
+  reportPost,
   saveProfile,
   scheduleIds,
   toggleLike,
@@ -37,6 +40,7 @@ const LIMITS = {
   content: 2000,
   author: 20,
   comment: 400,
+  reportReason: 100,
 };
 
 function readCookie(header, name) {
@@ -139,6 +143,22 @@ export function createApi(db) {
     if (!content) return res.status(400).json({ error: '댓글 내용을 입력해 주세요.' });
     const author = clean(req.body?.author, LIMITS.author) || '익명';
     res.status(201).json({ post: insertComment(db, { postId, author, content, uid: req.uid }) });
+  });
+
+  api.post('/api/posts/:postId/report', rateLimit('report', 30, 60 * 60 * 1000), (req, res) => {
+    const { postId } = req.params;
+    if (!postExists(db, postId)) return res.status(404).json({ error: '없는 글입니다.' });
+    const reason = clean(req.body?.reason, LIMITS.reportReason);
+    res.json({ post: reportPost(db, postId, req.uid, reason) });
+  });
+
+  api.post('/api/comments/:commentId/report', rateLimit('report', 30, 60 * 60 * 1000), (req, res) => {
+    const { commentId } = req.params;
+    if (!commentExists(db, commentId)) return res.status(404).json({ error: '없는 댓글입니다.' });
+    const reason = clean(req.body?.reason, LIMITS.reportReason);
+    const post = reportComment(db, commentId, req.uid, reason);
+    if (!post) return res.status(404).json({ error: '없는 댓글입니다.' });
+    res.json({ post });
   });
 
   api.post('/api/notices/:id/visit', rateLimit('visit', 300, 60 * 60 * 1000), (req, res) => {

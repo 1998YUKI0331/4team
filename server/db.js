@@ -48,6 +48,22 @@ CREATE TABLE IF NOT EXISTS post_likes (
   PRIMARY KEY (post_id, uid)
 );
 
+CREATE TABLE IF NOT EXISTS post_reports (
+  post_id    TEXT NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+  uid        TEXT NOT NULL,
+  reason     TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL,
+  PRIMARY KEY (post_id, uid)
+);
+
+CREATE TABLE IF NOT EXISTS comment_reports (
+  comment_id TEXT NOT NULL REFERENCES comments(id) ON DELETE CASCADE,
+  uid        TEXT NOT NULL,
+  reason     TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL,
+  PRIMARY KEY (comment_id, uid)
+);
+
 CREATE TABLE IF NOT EXISTS visits (
   notice_id TEXT PRIMARY KEY,
   count     INTEGER NOT NULL DEFAULT 0,
@@ -134,6 +150,9 @@ function seedIfEmpty(db) {
 
 /* --------------------------------------------------------------- 커뮤니티 */
 
+/** 이 인원 이상이 신고하면 글/댓글 내용을 모두에게 가린다(자동 숨김, 삭제는 아님). */
+const HIDE_THRESHOLD = 3;
+
 /**
  * 공감수 = 예시 글에 붙여 둔 초기값(seed_likes) + 실제 누른 사람 수.
  * 이렇게 해야 데모 숫자를 유지하면서도 "내가 눌렀는지"를 정확히 알 수 있다.
@@ -141,25 +160,49 @@ function seedIfEmpty(db) {
 const POST_SELECT = `
   SELECT p.id, p.notice_id AS noticeId, p.category, p.title, p.content, p.author, p.created_at AS createdAt,
          p.seed_likes + (SELECT COUNT(*) FROM post_likes l WHERE l.post_id = p.id) AS likes,
-         EXISTS (SELECT 1 FROM post_likes l2 WHERE l2.post_id = p.id AND l2.uid = ?) AS likedByMe
+         EXISTS (SELECT 1 FROM post_likes l2 WHERE l2.post_id = p.id AND l2.uid = ?) AS likedByMe,
+         (SELECT COUNT(*) FROM post_reports r WHERE r.post_id = p.id) AS reportCount,
+         EXISTS (SELECT 1 FROM post_reports r2 WHERE r2.post_id = p.id AND r2.uid = ?) AS reportedByMe
   FROM posts p
 `;
 
-function attachComments(db, posts) {
+/** 신고 누적 글/댓글은 삭제하지 않고 내용만 모두에게 가린다. */
+function redactPost(p) {
+  p.likedByMe = Boolean(p.likedByMe);
+  p.reportedByMe = Boolean(p.reportedByMe);
+  p.hidden = p.reportCount >= HIDE_THRESHOLD;
+  if (p.hidden) {
+    p.title = '신고가 누적되어 숨겨진 글입니다.';
+    p.content = '';
+  }
+  return p;
+}
+
+function redactComment(c) {
+  c.reportedByMe = Boolean(c.reportedByMe);
+  c.hidden = c.reportCount >= HIDE_THRESHOLD;
+  if (c.hidden) c.content = '신고가 누적되어 숨겨진 댓글입니다.';
+  return c;
+}
+
+function attachComments(db, posts, uid) {
   if (!posts.length) return posts;
-  const stmt = db.prepare(
-    'SELECT id, author, content, created_at AS createdAt FROM comments WHERE post_id = ? ORDER BY created_at'
-  );
+  const stmt = db.prepare(`
+    SELECT c.id, c.author, c.content, c.created_at AS createdAt,
+           (SELECT COUNT(*) FROM comment_reports r WHERE r.comment_id = c.id) AS reportCount,
+           EXISTS (SELECT 1 FROM comment_reports r2 WHERE r2.comment_id = c.id AND r2.uid = ?) AS reportedByMe
+    FROM comments c WHERE c.post_id = ? ORDER BY c.created_at
+  `);
   for (const p of posts) {
-    p.likedByMe = Boolean(p.likedByMe);
-    p.comments = stmt.all(p.id);
+    redactPost(p);
+    p.comments = stmt.all(uid, p.id).map(redactComment);
   }
   return posts;
 }
 
 export function listPosts(db, noticeId, uid) {
-  const rows = db.prepare(`${POST_SELECT} WHERE p.notice_id = ? ORDER BY p.created_at DESC`).all(uid, noticeId);
-  return attachComments(db, rows);
+  const rows = db.prepare(`${POST_SELECT} WHERE p.notice_id = ? ORDER BY p.created_at DESC`).all(uid, uid, noticeId);
+  return attachComments(db, rows, uid);
 }
 
 /** 같은 시·도의 다른 단지 글 (커뮤니티 하단 "인근 단지 이야기") */
@@ -169,8 +212,8 @@ export function listNearbyPosts(db, noticeId, uid, limit = 6) {
   const holes = siblings.map(() => '?').join(',');
   const rows = db
     .prepare(`${POST_SELECT} WHERE p.notice_id IN (${holes}) ORDER BY p.created_at DESC LIMIT ?`)
-    .all(uid, ...siblings, limit);
-  return attachComments(db, rows);
+    .all(uid, uid, ...siblings, limit);
+  return attachComments(db, rows, uid);
 }
 
 /** 목록 화면에서 카드마다 보여 주는 글 수 */
@@ -190,9 +233,9 @@ export function insertPost(db, { noticeId, category, title, content, author, uid
 }
 
 export function getPost(db, id, uid) {
-  const row = db.prepare(`${POST_SELECT} WHERE p.id = ?`).get(uid, id);
+  const row = db.prepare(`${POST_SELECT} WHERE p.id = ?`).get(uid, uid, id);
   if (!row) return null;
-  return attachComments(db, [row])[0];
+  return attachComments(db, [row], uid)[0];
 }
 
 export function toggleLike(db, postId, uid) {
@@ -216,6 +259,28 @@ export function insertComment(db, { postId, author, content, uid }) {
 
 export function postExists(db, postId) {
   return Boolean(db.prepare('SELECT 1 AS hit FROM posts WHERE id = ?').get(postId));
+}
+
+export function reportPost(db, postId, uid, reason) {
+  db.prepare(
+    `INSERT INTO post_reports (post_id, uid, reason, created_at) VALUES (?, ?, ?, ?)
+     ON CONFLICT(post_id, uid) DO NOTHING`
+  ).run(postId, uid, reason, new Date().toISOString());
+  return getPost(db, postId, uid);
+}
+
+export function commentExists(db, commentId) {
+  return Boolean(db.prepare('SELECT 1 AS hit FROM comments WHERE id = ?').get(commentId));
+}
+
+export function reportComment(db, commentId, uid, reason) {
+  const row = db.prepare('SELECT post_id AS postId FROM comments WHERE id = ?').get(commentId);
+  if (!row) return null;
+  db.prepare(
+    `INSERT INTO comment_reports (comment_id, uid, reason, created_at) VALUES (?, ?, ?, ?)
+     ON CONFLICT(comment_id, uid) DO NOTHING`
+  ).run(commentId, uid, reason, new Date().toISOString());
+  return getPost(db, row.postId, uid);
 }
 
 /* ------------------------------------------------------------------ 방문 */

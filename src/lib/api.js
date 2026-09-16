@@ -44,6 +44,9 @@ export const api = {
   createPost: (noticeId, payload) => request('POST', `/notices/${encodeURIComponent(noticeId)}/posts`, payload),
   like: (postId) => request('POST', `/posts/${encodeURIComponent(postId)}/like`),
   comment: (postId, payload) => request('POST', `/posts/${encodeURIComponent(postId)}/comments`, payload),
+  reportPost: (postId, reason) => request('POST', `/posts/${encodeURIComponent(postId)}/report`, { reason }),
+  reportComment: (commentId, reason) =>
+    request('POST', `/comments/${encodeURIComponent(commentId)}/report`, { reason }),
   visit: (noticeId) => request('POST', `/notices/${encodeURIComponent(noticeId)}/visit`),
   saveProfile: (profile) => request('PUT', '/profile', { profile }),
   toggleSchedule: (noticeId) => request('POST', `/notices/${encodeURIComponent(noticeId)}/schedule/toggle`),
