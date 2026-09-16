@@ -2,8 +2,10 @@
 import { computed } from 'vue';
 import { NOTICES, GENERATED_AT } from '../lib/notices';
 import { matchTierCounts, matchedCount, ui } from '../stores/app';
+import { scheduleStore } from '../stores/schedule';
 
 const openCount = computed(() => NOTICES.filter((n) => n.status === 'open').length);
+const savedCount = computed(() => scheduleStore.ids.value.length);
 
 const refDate = computed(() => {
   const d = GENERATED_AT ? new Date(GENERATED_AT) : new Date();
@@ -30,6 +32,16 @@ const refDate = computed(() => {
         내 조건 <b>{{ matchedCount }}</b
         >건<span class="topbar__match-detail"> (특별공급 {{ matchTierCounts.special }})</span>
       </span>
+      <button type="button" class="topbar__calendar" @click="ui.calendarOpen = true">
+        <svg viewBox="0 0 16 16" aria-hidden="true">
+          <path
+            d="M4.5 1.5v1.6h7V1.5H13a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1h1.5Zm-1.5 4.4v7.1h10V5.9H3Z"
+            fill="currentColor"
+          />
+        </svg>
+        캘린더
+        <i v-if="savedCount">{{ savedCount }}</i>
+      </button>
       <span class="topbar__ref">기준일 {{ refDate }}</span>
       <label class="topbar__sync">
         <input type="checkbox" v-model="ui.syncMap" />

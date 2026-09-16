@@ -11,6 +11,7 @@ import { createProfile, evaluateAll } from '../lib/matching';
 import { api } from '../lib/api';
 import { communityStore } from './community';
 import { markOffline, markOnline, serverState } from './server';
+import { scheduleStore } from './schedule';
 import { visitStore } from './visits';
 
 /**
@@ -35,6 +36,8 @@ export const ui = reactive({
   sheetOpen: false,
   /** 좁은 화면에서 커뮤니티를 레이어 팝업으로 띄울 때 */
   communityPopup: false,
+  /** 상단 캘린더 버튼으로 여는 청약마감 캘린더 팝업 */
+  calendarOpen: false,
   viewport: null,
   focusRequest: null,
   mapError: null,
@@ -148,6 +151,7 @@ export async function initApp() {
     const data = await api.bootstrap();
     visitStore.hydrate(data.visits);
     communityStore.hydrateCounts(data.postCounts);
+    scheduleStore.hydrate(data.schedules);
     if (data.profile && Object.keys(data.profile).length) Object.assign(profile, data.profile);
     markOnline();
   } catch (e) {
