@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref } from 'vue';
-import { buddyState, nudge, pickIdleMessage, prefersReducedMotion } from '../stores/buddy';
+import { buddyState, nudge, openGeumgaengRun, pickIdleMessage, prefersReducedMotion } from '../stores/buddy';
 
 defineProps({
   /** 상세 패널이 열린 넓은 화면에서는 패널을 피해 왼쪽으로 비켜선다. */
@@ -22,7 +22,20 @@ function scheduleIdleBurst() {
   }, wait);
 }
 
+/** 1.5초 안에 5번 두드리면 숨겨진 미니게임 "금갱런" 이 열린다. */
+const CLICK_STREAK_WINDOW = 2500;
+const CLICK_STREAK_TARGET = 5;
+let clickStreak = [];
+
 function poke() {
+  const now = Date.now();
+  clickStreak = clickStreak.filter((t) => now - t < CLICK_STREAK_WINDOW);
+  clickStreak.push(now);
+  if (clickStreak.length >= CLICK_STREAK_TARGET) {
+    clickStreak = [];
+    openGeumgaengRun();
+    return;
+  }
   nudge(1600, '불렀어요? 열심히 찾는 중이에요!');
 }
 
