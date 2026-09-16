@@ -9,6 +9,7 @@ import MapView from './components/MapView.vue';
 import MapNotice from './components/MapNotice.vue';
 import DetailPanel from './components/DetailPanel.vue';
 import BuddyMascot from './components/BuddyMascot.vue';
+import GeumgaengRun from './components/GeumgaengRun.vue';
 import { useMediaQuery } from './composables/useMediaQuery';
 import { NOTICE_BY_ID, NOTICES } from './lib/notices';
 import {
@@ -23,7 +24,7 @@ import {
   ui,
 } from './stores/app';
 import { serverState } from './stores/server';
-import { installBuddyClickDelay } from './stores/buddy';
+import { buddyState, closeGeumgaengRun, installBuddyClickDelay } from './stores/buddy';
 
 /**
  * 커뮤니티를 상세 패널 "탭" 으로 넣을지, 화면 위에 "레이어 팝업" 으로 띄울지의 기준.
@@ -167,5 +168,7 @@ onUnmounted(() => {
       @close="ui.communityPopup = false"
       @goto-notice="gotoNotice"
     />
+
+    <GeumgaengRun v-if="buddyState.gameOpen" @close="closeGeumgaengRun" />
   </div>
 </template>
