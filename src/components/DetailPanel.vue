@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { formatDate, formatWon, priceLabel, statusLabelOf } from '../lib/notices';
 import { communityStore } from '../stores/community';
 import { CROWN_RANKS, RANK_LIMIT, visitStore } from '../stores/visits';
+import { playNotice } from '../stores/app';
 import CommunityPanel from './CommunityPanel.vue';
 import RankCrown from './RankCrown.vue';
 
@@ -147,6 +148,9 @@ function specialDetail(s) {
         <a v-if="pdfUrl" class="btn btn--primary" :href="pdfUrl" target="_blank" rel="noreferrer">공고문 원문 PDF</a>
         <a v-if="item.url" class="btn" :href="item.url" target="_blank" rel="noreferrer">기관 홈페이지</a>
         <button type="button" class="btn" @click="emit('focus', item)">지도에서 보기</button>
+        <button type="button" class="btn btn--play" @click="playNotice(item)">
+          🎮 이 단지로 시뮬레이션
+        </button>
       </footer>
     </div>
 

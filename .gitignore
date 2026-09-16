@@ -7,4 +7,6 @@ dist/
 scripts/_*.mjs
 
 # 로컬 개발용 SQLite
-data/
+/data/
+# Claude Code 로컬 실행 설정
+.claude/

@@ -22,6 +22,14 @@ export const filters = reactive(createFilters());
 export const profile = reactive(createProfile());
 
 export const ui = reactive({
+  /** 최상단 탭: map(청약지도) | game(청약 로드 시뮬레이션) */
+  view: 'map',
+  /**
+   * 지도 상세에서 "이 단지로 시작"을 눌렀을 때 게임에 넘길 단지.
+   * { title, region, district } — 게임은 이걸로 시작 지역과 공고를 잡는다.
+   * 게임이 마운트되면서 한 번 읽고 비운다.
+   */
+  gameFocus: null,
   /** 내 조건(매칭) 사용 여부 */
   matchOn: false,
   /** 사이드바 맨 위 "내 조건 필터" 펼침 상태 — 기본은 펼침 */
@@ -122,6 +130,16 @@ export function focusOn(item) {
   if (item.lat != null && item.lng != null) {
     ui.focusRequest = { lat: item.lat, lng: item.lng, at: Date.now() };
   }
+}
+
+/** 지도에서 보던 단지를 그대로 게임으로 넘긴다 */
+export function playNotice(item) {
+  ui.gameFocus = item
+    ? { title: item.title, region: item.region ?? null, district: item.district ?? null }
+    : null;
+  ui.view = 'game';
+  ui.sheetOpen = false;
+  ui.communityPopup = false;
 }
 
 export function toggleFilter(key, value) {
