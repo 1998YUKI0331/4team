@@ -11,11 +11,14 @@
     "preview": "vite preview",
     "data:addresses": "node scripts/extract-addresses.mjs",
     "data:geocode": "node scripts/geocode.mjs",
-    "data:build": "node scripts/extract-addresses.mjs && node scripts/geocode.mjs"
+    "data:build": "node scripts/extract-addresses.mjs && node scripts/geocode.mjs",
+    "game:edge": "node tools/game/edge.js",
+    "game:sim": "node tools/game/simulate.js 40"
   },
   "dependencies": {
     "compression": "^1.8.2",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "three": "^0.169.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.0",

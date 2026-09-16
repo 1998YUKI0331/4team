@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, onUnmounted, watch } from 'vue';
+import { defineAsyncComponent, onMounted, onUnmounted, watch } from 'vue';
 import TopBar from './components/TopBar.vue';
 import FilterBar from './components/FilterBar.vue';
 import NoticeCard from './components/NoticeCard.vue';
@@ -26,6 +26,15 @@ import {
 } from './stores/app';
 import { serverState } from './stores/server';
 import { buddyState, closeGeumgaengRun, installBuddyClickDelay } from './stores/buddy';
+
+/**
+ * 청약 로드(3D 게임)는 Three.js 를 끌고 들어와 500KB 가 넘는다.
+ * 지도만 쓰는 사용자가 그 값을 치르지 않도록 게임 탭을 처음 열 때만 받아 온다.
+ */
+const GameView = defineAsyncComponent({
+  loader: () => import('./components/GameView.vue'),
+  delay: 120,
+});
 
 /**
  * 커뮤니티를 상세 패널 "탭" 으로 넣을지, 화면 위에 "레이어 팝업" 으로 띄울지의 기준.
@@ -110,7 +119,9 @@ onUnmounted(() => {
       <button type="button" @click="initApp">다시 시도</button>
     </p>
 
-    <div class="app__body">
+    <GameView v-if="ui.view === 'game'" />
+
+    <div v-show="ui.view === 'map'" class="app__body">
       <section class="sidebar" :class="{ 'is-open': ui.sheetOpen }">
         <button
           type="button"
@@ -167,13 +178,14 @@ onUnmounted(() => {
       </main>
     </div>
 
+    <!-- 금갱이는 두 탭에 모두 상주한다. 다만 비켜서기·숨기기는 지도 화면의 사정이다. -->
     <BuddyMascot
-      :shifted="roomy && !!selected && !ui.communityPopup"
-      :tucked="compact && (!!selected || ui.sheetOpen)"
+      :shifted="ui.view === 'map' && roomy && !!selected && !ui.communityPopup"
+      :tucked="ui.view === 'map' && compact && (!!selected || ui.sheetOpen)"
     />
 
     <CommunityModal
-      v-if="selected && ui.communityPopup"
+      v-if="ui.view === 'map' && selected && ui.communityPopup"
       :notice="selected"
       @close="ui.communityPopup = false"
       @goto-notice="gotoNotice"

@@ -2561,6 +2561,50 @@ div:has(> .cluster-root) {
   }
 }
 
+/* ── 최상단 화면 전환 탭 (청약지도 / 청약 로드) ───────────────── */
+.topbar__tabs {
+  display: flex;
+  gap: 4px;
+  margin-left: 18px;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.06);
+  flex-shrink: 0;
+}
+.topbar__tabs button {
+  border: 0;
+  background: transparent;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+.topbar__tabs button:hover { color: var(--text); }
+.topbar__tabs button.is-on {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-s);
+}
+.topbar__tabs button:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+/* 지도 상세 -> 게임으로 넘어가는 버튼 */
+.btn--play {
+  border-color: rgba(124, 92, 255, 0.4);
+  color: #5b3fd6;
+  background: rgba(124, 92, 255, 0.08);
+}
+.btn--play:hover { background: rgba(124, 92, 255, 0.16); }
+
+@media (max-width: 720px) {
+  .topbar__tabs { margin-left: 8px; }
+  .topbar__tabs button { padding: 6px 10px; font-size: 12px; }
+}
+
 /* ------------------------------------------------------------ 금갱런 (숨겨진 미니게임) */
 
 /* 금갱이를 1.5초 안에 5번 두드리면 열리는 크롬 공룡런 스타일 이스터에그 */
