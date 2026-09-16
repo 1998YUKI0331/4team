@@ -153,11 +153,8 @@ function draw() {
   }
 }
 
+/** 닫기는 X 버튼으로만 — 배경 클릭·Esc 로는 닫히지 않는다. */
 function onKeydown(e) {
-  if (e.key === 'Escape') {
-    emit('close');
-    return;
-  }
   if (e.key === ' ' || e.key === 'ArrowUp' || e.key === 'Spacebar') {
     e.preventDefault();
     jump();
@@ -178,7 +175,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="geumgaengrun" data-buddy-skip role="dialog" aria-modal="true" aria-label="금갱런 미니게임">
-    <div class="geumgaengrun__dim" @click="emit('close')" />
+    <div class="geumgaengrun__dim" />
     <div class="geumgaengrun__card">
       <button type="button" class="geumgaengrun__close" aria-label="닫기" @click="emit('close')">✕</button>
 
