@@ -68,6 +68,14 @@ CREATE TABLE IF NOT EXISTS profiles (
   updated_at TEXT NOT NULL
 );
 
+-- 사람마다 "청약마감 캘린더"에 저장해 둔 공고
+CREATE TABLE IF NOT EXISTS saved_schedules (
+  uid        TEXT NOT NULL,
+  notice_id  TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  PRIMARY KEY (uid, notice_id)
+);
+
 CREATE TABLE IF NOT EXISTS meta (
   key   TEXT PRIMARY KEY,
   value TEXT NOT NULL
@@ -253,4 +261,28 @@ export function saveProfile(db, uid, profile) {
     `INSERT INTO profiles (uid, data, updated_at) VALUES (?, ?, ?)
      ON CONFLICT(uid) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at`
   ).run(uid, JSON.stringify(profile), new Date().toISOString());
+}
+
+/* -------------------------------------------------------------- 캘린더 */
+
+export function scheduleIds(db, uid) {
+  return db
+    .prepare('SELECT notice_id AS id FROM saved_schedules WHERE uid = ? ORDER BY created_at')
+    .all(uid)
+    .map((r) => r.id);
+}
+
+/** @returns {{ saved: boolean, ids: string[] }} 토글 후 상태와 uid 의 전체 저장 목록 */
+export function toggleSchedule(db, uid, noticeId) {
+  const exists = db.prepare('SELECT 1 AS hit FROM saved_schedules WHERE uid = ? AND notice_id = ?').get(uid, noticeId);
+  if (exists) {
+    db.prepare('DELETE FROM saved_schedules WHERE uid = ? AND notice_id = ?').run(uid, noticeId);
+  } else {
+    db.prepare('INSERT INTO saved_schedules (uid, notice_id, created_at) VALUES (?, ?, ?)').run(
+      uid,
+      noticeId,
+      new Date().toISOString()
+    );
+  }
+  return { saved: !exists, ids: scheduleIds(db, uid) };
 }

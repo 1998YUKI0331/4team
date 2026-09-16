@@ -1,15 +1,19 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { formatDate, formatWon, priceLabel, statusLabelOf } from '../lib/notices';
 import { communityStore } from '../stores/community';
+import { scheduleStore } from '../stores/schedule';
 import { CROWN_RANKS, RANK_LIMIT, visitStore } from '../stores/visits';
+import { playNotice } from '../stores/app';
+import { scoreColor, scoresOf } from '../lib/scoreboard';
+import AnalysisPanel from './AnalysisPanel.vue';
 import CommunityPanel from './CommunityPanel.vue';
 import RankCrown from './RankCrown.vue';
 
 const props = defineProps({
   item: { type: Object, required: true },
   match: { type: Object, default: null },
-  /** 'info' | 'community' — 커뮤니티는 화면이 넓을 때만 이 패널 안에서 열린다. */
+  /** 'info' | 'analysis' | 'community' — 커뮤니티는 화면이 넓을 때만 이 패널 안에서 열린다. */
   tab: { type: String, default: 'info' },
 });
 
@@ -19,6 +23,19 @@ const pdfUrl = computed(() => (props.item.pdf ? `/공고문/${encodeURIComponent
 const specials = computed(() => (props.item.special ?? []).filter((s) => s.type !== '일반공급'));
 const general = computed(() => (props.item.special ?? []).find((s) => s.type === '일반공급'));
 const postCount = computed(() => communityStore.countFor(props.item.id));
+const scheduleSaved = computed(() => scheduleStore.isSaved(props.item.id));
+const scheduleBusy = ref(false);
+
+async function toggleSchedule() {
+  scheduleBusy.value = true;
+  try {
+    await scheduleStore.toggle(props.item.id);
+  } catch {
+    // 저장 실패는 화면 흐름을 막지 않는다 — 오프라인 배너가 별도로 뜬다
+  } finally {
+    scheduleBusy.value = false;
+  }
+}
 const visits = computed(() => visitStore.countFor(props.item.id));
 const rank = computed(() => visitStore.rankOf(props.item.id));
 const crownRank = computed(() => (rank.value && rank.value <= CROWN_RANKS ? rank.value : null));
@@ -26,6 +43,9 @@ const showRank = computed(() => rank.value && rank.value <= RANK_LIMIT);
 const extras = computed(() =>
   props.item.extra ? Object.entries(props.item.extra).filter(([, v]) => v && typeof v !== 'object') : []
 );
+
+/** 입지 분석 — 임대처럼 비교 단지를 특정할 수 없는 공고는 점수가 없다. */
+const totalScore = computed(() => scoresOf(props.item.id)?.total ?? null);
 
 function specialDetail(s) {
   const bits = [];
@@ -68,6 +88,19 @@ function specialDetail(s) {
       <button
         type="button"
         role="tab"
+        :aria-selected="tab === 'analysis'"
+        :class="{ 'is-on': tab === 'analysis' }"
+        @click="emit('select-tab', 'analysis')"
+      >
+        입지 분석<i
+          v-if="totalScore != null"
+          class="detail__score"
+          :style="{ background: scoreColor(totalScore) }"
+        >{{ totalScore }}</i>
+      </button>
+      <button
+        type="button"
+        role="tab"
         :aria-selected="tab === 'community'"
         :class="{ 'is-on': tab === 'community' }"
         @click="emit('select-tab', 'community')"
@@ -103,7 +136,21 @@ function specialDetail(s) {
 
       <dl class="facts">
         <div class="facts__row"><dt>모집공고일</dt><dd>{{ formatDate(item.announce) }}</dd></div>
-        <div class="facts__row"><dt>청약 마감</dt><dd>{{ item.deadline ? formatDate(item.deadline) : '공고문 참고' }}</dd></div>
+        <div class="facts__row">
+          <dt>청약 마감</dt>
+          <dd class="facts__deadline">
+            <span>{{ item.deadline ? formatDate(item.deadline) : '공고문 참고' }}</span>
+            <button
+              type="button"
+              class="schedule-btn"
+              :class="{ 'is-on': scheduleSaved }"
+              :disabled="scheduleBusy"
+              @click="toggleSchedule"
+            >
+              {{ scheduleSaved ? '캘린더에 저장됨' : '캘린더에 저장' }}
+            </button>
+          </dd>
+        </div>
         <div class="facts__row"><dt>공급 유형</dt><dd>{{ item.housingType }}</dd></div>
         <div class="facts__row"><dt>사업 주체</dt><dd>{{ item.agencyName || item.agency }}</dd></div>
         <div class="facts__row">
@@ -147,7 +194,14 @@ function specialDetail(s) {
         <a v-if="pdfUrl" class="btn btn--primary" :href="pdfUrl" target="_blank" rel="noreferrer">공고문 원문 PDF</a>
         <a v-if="item.url" class="btn" :href="item.url" target="_blank" rel="noreferrer">기관 홈페이지</a>
         <button type="button" class="btn" @click="emit('focus', item)">지도에서 보기</button>
+        <button type="button" class="btn btn--play" @click="playNotice(item)">
+          🎮 이 단지로 시뮬레이션
+        </button>
       </footer>
+    </div>
+
+    <div v-else-if="tab === 'analysis'" class="detail__body">
+      <AnalysisPanel :item="item" />
     </div>
 
     <div v-else class="detail__body detail__body--community">

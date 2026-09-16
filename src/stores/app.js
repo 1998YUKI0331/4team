@@ -11,6 +11,7 @@ import { createProfile, evaluateAll } from '../lib/matching';
 import { api } from '../lib/api';
 import { communityStore } from './community';
 import { markOffline, markOnline, serverState } from './server';
+import { scheduleStore } from './schedule';
 import { visitStore } from './visits';
 
 /**
@@ -22,6 +23,14 @@ export const filters = reactive(createFilters());
 export const profile = reactive(createProfile());
 
 export const ui = reactive({
+  /** 최상단 탭: map(청약지도) | game(청약 로드 시뮬레이션) */
+  view: 'map',
+  /**
+   * 지도 상세에서 "이 단지로 시작"을 눌렀을 때 게임에 넘길 단지.
+   * { title, region, district } — 게임은 이걸로 시작 지역과 공고를 잡는다.
+   * 게임이 마운트되면서 한 번 읽고 비운다.
+   */
+  gameFocus: null,
   /** 내 조건(매칭) 사용 여부 */
   matchOn: false,
   /** 사이드바 맨 위 "내 조건 필터" 펼침 상태 — 기본은 펼침 */
@@ -35,6 +44,8 @@ export const ui = reactive({
   sheetOpen: false,
   /** 좁은 화면에서 커뮤니티를 레이어 팝업으로 띄울 때 */
   communityPopup: false,
+  /** 상단 캘린더 버튼으로 여는 청약마감 캘린더 팝업 */
+  calendarOpen: false,
   viewport: null,
   focusRequest: null,
   mapError: null,
@@ -124,6 +135,16 @@ export function focusOn(item) {
   }
 }
 
+/** 지도에서 보던 단지를 그대로 게임으로 넘긴다 */
+export function playNotice(item) {
+  ui.gameFocus = item
+    ? { title: item.title, region: item.region ?? null, district: item.district ?? null }
+    : null;
+  ui.view = 'game';
+  ui.sheetOpen = false;
+  ui.communityPopup = false;
+}
+
 export function toggleFilter(key, value) {
   const list = filters[key];
   const idx = list.indexOf(value);
@@ -148,6 +169,7 @@ export async function initApp() {
     const data = await api.bootstrap();
     visitStore.hydrate(data.visits);
     communityStore.hydrateCounts(data.postCounts);
+    scheduleStore.hydrate(data.schedules);
     if (data.profile && Object.keys(data.profile).length) Object.assign(profile, data.profile);
     markOnline();
   } catch (e) {
