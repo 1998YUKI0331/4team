@@ -35,6 +35,8 @@ import { won, ymLabel, 억 } from './data/constants.js';
  *                        (SPA 안에서는 location.reload() 를 쓸 수 없다)
  * @param opts.focus      { title, region, district } — 지도에서 넘어올 때 그 단지로 시작
  * @param opts.onEvent    (kind, payload) — 바깥(금갱이 등)이 반응할 만한 순간만 알린다
+ * @param opts.isBlocked  () => boolean — 참이면 게임이 키 입력을 받지 않는다.
+ *                        호스트가 게임 위에 자기 오버레이를 띄웠을 때 쓴다.
  * @returns {{ destroy(): void }}
  */
 export function createGame(root, opts = {}) {
@@ -525,6 +527,10 @@ export function createGame(root, opts = {}) {
   on(document, 'keydown', (e) => {
     if (!state || busy || destroyed) return;
     if (!root.isConnected) return;                            // 다른 탭으로 옮겨간 뒤
+    // 호스트가 게임 위에 오버레이를 띄운 동안은 키를 넘기지 않는다.
+    // (금갱런은 window 에서 Space 를 받는데 preventDefault 만 하고 전파는 막지 않아서,
+    //  막지 않으면 공룡이 점프하면서 게임 카메라도 같이 움직인다.)
+    if (opts.isBlocked?.()) return;
     if (e.isComposing || e.keyCode === 229) return;           // 한글 입력 조합 중
     if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
     if (!$('#overlay', root)?.hasAttribute('hidden')) return; // 모달이 열려 있으면 무시

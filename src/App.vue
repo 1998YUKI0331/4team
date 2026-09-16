@@ -9,6 +9,7 @@ import MapView from './components/MapView.vue';
 import MapNotice from './components/MapNotice.vue';
 import DetailPanel from './components/DetailPanel.vue';
 import BuddyMascot from './components/BuddyMascot.vue';
+import GeumgaengRun from './components/GeumgaengRun.vue';
 import { useMediaQuery } from './composables/useMediaQuery';
 import { NOTICE_BY_ID, NOTICES } from './lib/notices';
 import {
@@ -23,7 +24,7 @@ import {
   ui,
 } from './stores/app';
 import { serverState } from './stores/server';
-import { installBuddyClickDelay } from './stores/buddy';
+import { buddyState, closeGeumgaengRun, installBuddyClickDelay } from './stores/buddy';
 
 /**
  * 청약 로드(3D 게임)는 Three.js 를 끌고 들어와 500KB 가 넘는다.
@@ -179,5 +180,7 @@ onUnmounted(() => {
       @close="ui.communityPopup = false"
       @goto-notice="gotoNotice"
     />
+
+    <GeumgaengRun v-if="buddyState.gameOpen" @close="closeGeumgaengRun" />
   </div>
 </template>

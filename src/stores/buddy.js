@@ -23,7 +23,19 @@ export const buddyState = reactive({
   animating: false,
   /** 말풍선 문구 */
   message: '',
+  /** 금갱런 미니게임(연속 5클릭 이스터에그)이 열려 있는지 */
+  gameOpen: false,
 });
+
+/** 금갱이를 연속으로 5번 두드리면 열리는 미니게임. */
+export function openGeumgaengRun() {
+  buddyState.gameOpen = true;
+  buddyState.message = '';
+}
+
+export function closeGeumgaengRun() {
+  buddyState.gameOpen = false;
+}
 
 const WORK_MESSAGES = ['다다다다!', '처리 중이에요!', '잠시만요!', '바로 찾아볼게요!'];
 const IDLE_MESSAGES = [

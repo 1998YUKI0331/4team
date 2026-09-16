@@ -2,7 +2,7 @@
 import { onMounted, onBeforeUnmount, ref } from 'vue';
 import { createGame } from '../game/main.js';
 import '../game/game.css';
-import { nudge } from '../stores/buddy';
+import { buddyState, nudge } from '../stores/buddy';
 import { ui } from '../stores/app';
 
 /**
@@ -52,6 +52,9 @@ function mount() {
     onRestart: restart,
     onEvent: onGameEvent,
     focus: ui.gameFocus,
+    // 금갱런(금갱이 5연속 클릭 이스터에그)이 게임 위에 열려 있는 동안은
+    // 키 입력을 그쪽에만 준다. 둘 다 Space 를 쓴다.
+    isBlocked: () => buddyState.gameOpen,
   });
 }
 
