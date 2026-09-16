@@ -8,6 +8,7 @@ import CommunityModal from './components/CommunityModal.vue';
 import MapView from './components/MapView.vue';
 import MapNotice from './components/MapNotice.vue';
 import DetailPanel from './components/DetailPanel.vue';
+import BuddyMascot from './components/BuddyMascot.vue';
 import { useMediaQuery } from './composables/useMediaQuery';
 import { NOTICE_BY_ID, NOTICES } from './lib/notices';
 import {
@@ -22,12 +23,16 @@ import {
   ui,
 } from './stores/app';
 import { serverState } from './stores/server';
+import { installBuddyClickDelay } from './stores/buddy';
 
 /**
  * 커뮤니티를 상세 패널 "탭" 으로 넣을지, 화면 위에 "레이어 팝업" 으로 띄울지의 기준.
  * 상세 패널(420px)이 지도를 다 덮지 않고 커뮤니티 글까지 읽을 만한 폭이 나올 때만 탭으로 연다.
  */
 const roomy = useMediaQuery('(min-width: 1180px)');
+
+/** 모바일 폭 — 상세/목록 시트가 화면을 덮으면 금갱이는 잠시 내려간다. */
+const compact = useMediaQuery('(max-width: 960px)');
 
 function selectDetailTab(tab) {
   if (tab === 'community' && !roomy.value) {
@@ -70,11 +75,19 @@ function onKeydown(e) {
   if (selected.value) closeDetail();
 }
 
+/** 금갱이가 클릭을 0.5초 붙잡아 두는 동안 타자를 친다. 해제 함수를 받아 둔다. */
+let uninstallBuddy = () => {};
+
 onMounted(() => {
   document.addEventListener('keydown', onKeydown);
+  uninstallBuddy = installBuddyClickDelay();
   initApp(); // 방문수·글 수·저장된 내 조건 불러오기 (실패해도 화면은 그대로)
 });
-onUnmounted(() => document.removeEventListener('keydown', onKeydown));
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', onKeydown);
+  uninstallBuddy();
+});
 </script>
 
 <template>
@@ -142,6 +155,11 @@ onUnmounted(() => document.removeEventListener('keydown', onKeydown));
         />
       </main>
     </div>
+
+    <BuddyMascot
+      :shifted="roomy && !!selected && !ui.communityPopup"
+      :tucked="compact && (!!selected || ui.sheetOpen)"
+    />
 
     <CommunityModal
       v-if="selected && ui.communityPopup"
